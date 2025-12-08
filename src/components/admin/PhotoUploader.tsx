@@ -155,7 +155,7 @@ export default function PhotoUploader({ category, onUploadComplete }: PhotoUploa
     if (e.dataTransfer.files.length > 0) {
       handleFiles(e.dataTransfer.files);
     }
-  }, [category]);
+  }, [handleFiles]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();

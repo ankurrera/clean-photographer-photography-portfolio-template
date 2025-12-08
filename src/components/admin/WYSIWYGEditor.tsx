@@ -369,7 +369,7 @@ export default function WYSIWYGEditor({ category }: WYSIWYGEditorProps) {
             </DialogDescription>
           </DialogHeader>
           <PhotoUploader 
-            category={category as any} 
+            category={category as 'selected' | 'commissioned' | 'editorial' | 'personal'} 
             onUploadComplete={handleUploadComplete} 
           />
         </DialogContent>

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { GripVertical, Maximize2, ZoomIn, ZoomOut, MoveUp, MoveDown, Trash2 } from 'lucide-react';
 import { PhotoLayoutData } from '@/types/wysiwyg';
@@ -35,10 +35,10 @@ export default function DraggablePhoto({
   const touchStartDistance = useRef(0);
   const scaleHoldTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const snapValue = (value: number) => {
+  const snapValue = useCallback((value: number) => {
     if (!snapToGrid) return value;
     return Math.round(value / gridSize) * gridSize;
-  };
+  }, [snapToGrid, gridSize]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!isEditMode || e.button !== 0) return;
@@ -220,7 +220,7 @@ export default function DraggablePhoto({
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, isResizing, isScaling, photo.id, snapToGrid, gridSize, onUpdate]);
+  }, [isDragging, isResizing, isScaling, photo.id, snapValue, onUpdate]);
 
   return (
     <motion.div

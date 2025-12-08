@@ -24,7 +24,7 @@ export interface PhotoLayoutData {
   rotation: number;
   z_index: number;
   is_draft: boolean;
-  layout_config: Record<string, any>;
+  layout_config: Record<string, unknown>;
 }
 
 export interface LayoutRevision {
