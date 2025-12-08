@@ -7,7 +7,7 @@ import MasonryGallery from "@/components/MasonryGallery";
 import Lightbox from "@/components/Lightbox";
 import SEO from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
-import { GalleryImage } from "@/types/gallery";
+import { GalleryImage, DEFAULT_PHOTO_WIDTH, DEFAULT_PHOTO_HEIGHT } from "@/types/gallery";
 
 const validCategories = ['selected', 'commissioned', 'editorial', 'personal', 'all'];
 
@@ -33,6 +33,8 @@ const CategoryGallery = () => {
         setLoading(true);
         setError(null);
         
+        const validatedCategory = category!.toLowerCase();
+        
         // Build query based on category - 'all' fetches from all categories
         let query = supabase
           .from('photos')
@@ -41,8 +43,8 @@ const CategoryGallery = () => {
           .order('display_order', { ascending: true });
 
         // Only filter by category if not 'all'
-        if (category!.toLowerCase() !== 'all') {
-          query = query.eq('category', category!.toLowerCase());
+        if (validatedCategory !== 'all') {
+          query = query.eq('category', validatedCategory);
         }
 
         const { data, error: fetchError } = await query;
@@ -59,8 +61,8 @@ const CategoryGallery = () => {
           client: photo.description || '',
           location: '',
           details: photo.description || '',
-          width: photo.width || 800,
-          height: photo.height || 1000,
+          width: photo.width || DEFAULT_PHOTO_WIDTH,
+          height: photo.height || DEFAULT_PHOTO_HEIGHT,
         }));
 
         setImages(transformedImages);

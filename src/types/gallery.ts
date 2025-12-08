@@ -1,3 +1,7 @@
+// Default dimensions for photos when not specified
+export const DEFAULT_PHOTO_WIDTH = 800;
+export const DEFAULT_PHOTO_HEIGHT = 1000;
+
 export interface GalleryImage {
   type?: 'image' | 'video';
   src: string;
@@ -15,6 +19,6 @@ export interface GalleryImage {
 export interface Portrait {
   src: string;
   alt: string;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
 }

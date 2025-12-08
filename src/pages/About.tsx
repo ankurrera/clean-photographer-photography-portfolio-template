@@ -6,7 +6,7 @@ import PortfolioHeader from "@/components/PortfolioHeader";
 import PortfolioFooter from "@/components/PortfolioFooter";
 import SEO from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
-import { Portrait } from "@/types/gallery";
+import { Portrait, DEFAULT_PHOTO_WIDTH, DEFAULT_PHOTO_HEIGHT } from "@/types/gallery";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -76,8 +76,8 @@ const About = () => {
           setPortrait({
             src: photo.image_url,
             alt: photo.title || 'Portrait',
-            width: photo.width || 800,
-            height: photo.height || 1000,
+            width: photo.width || DEFAULT_PHOTO_WIDTH,
+            height: photo.height || DEFAULT_PHOTO_HEIGHT,
           });
         }
       } catch (err) {

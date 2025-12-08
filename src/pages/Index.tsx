@@ -6,7 +6,7 @@ import MasonryGallery from "@/components/MasonryGallery";
 import Lightbox from "@/components/Lightbox";
 import SEO from "@/components/SEO";
 import { supabase } from "@/integrations/supabase/client";
-import { GalleryImage } from "@/types/gallery";
+import { GalleryImage, DEFAULT_PHOTO_WIDTH, DEFAULT_PHOTO_HEIGHT } from "@/types/gallery";
 
 const Index = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -44,8 +44,8 @@ const Index = () => {
           client: photo.description || '',
           location: '',
           details: photo.description || '',
-          width: photo.width || 800,
-          height: photo.height || 1000,
+          width: photo.width || DEFAULT_PHOTO_WIDTH,
+          height: photo.height || DEFAULT_PHOTO_HEIGHT,
         }));
 
         setDisplayImages(transformedImages);
