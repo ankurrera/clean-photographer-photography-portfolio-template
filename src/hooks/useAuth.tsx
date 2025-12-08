@@ -35,45 +35,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return !!data;
   };
 
+  const updateAuthState = async (session: Session | null) => {
+    setSession(session);
+    setUser(session?.user ?? null);
+    
+    // Wait for admin check to complete before setting isLoading to false
+    if (session?.user) {
+      try {
+        const isAdminUser = await checkAdminRole(session.user.id);
+        setIsAdmin(isAdminUser);
+      } catch (error) {
+        console.error('Error checking admin role:', error);
+        setIsAdmin(false);
+      }
+    } else {
+      setIsAdmin(false);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Wait for admin check to complete before setting isLoading to false
-        if (session?.user) {
-          try {
-            const isAdminUser = await checkAdminRole(session.user.id);
-            setIsAdmin(isAdminUser);
-          } catch (error) {
-            console.error('Error checking admin role:', error);
-            setIsAdmin(false);
-          }
-        } else {
-          setIsAdmin(false);
-        }
-        setIsLoading(false);
+        await updateAuthState(session);
       }
     );
 
     // THEN check for existing session
     const initializeAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        try {
-          const isAdminUser = await checkAdminRole(session.user.id);
-          setIsAdmin(isAdminUser);
-        } catch (error) {
-          console.error('Error checking admin role:', error);
-          setIsAdmin(false);
-        }
-      }
-      setIsLoading(false);
+      await updateAuthState(session);
     };
     
     initializeAuth();
