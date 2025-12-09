@@ -23,9 +23,16 @@ const LayoutGallery = ({ images, onImageClick }: LayoutGalleryProps) => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleImageLoad = (index: number) => {
+  const handleImageLoad = useCallback((index: number) => {
     setLoadedImages((prev) => new Set(prev).add(index));
-  };
+  }, []);
+
+  // Check if image is already cached/complete on mount
+  const checkImageComplete = useCallback((img: HTMLImageElement | null, index: number) => {
+    if (img?.complete && img.naturalHeight !== 0) {
+      handleImageLoad(index);
+    }
+  }, [handleImageLoad]);
 
   const handleImageHover = (index: number) => {
     setHoveredIndex(index);
@@ -187,6 +194,7 @@ const LayoutGallery = ({ images, onImageClick }: LayoutGalleryProps) => {
                     </video>
                   ) : (
                     <img
+                      ref={(img) => checkImageComplete(img, index)}
                       src={image.src}
                       alt={image.alt}
                       onLoad={() => handleImageLoad(index)}
@@ -277,6 +285,7 @@ const LayoutGallery = ({ images, onImageClick }: LayoutGalleryProps) => {
                   </video>
                 ) : (
                   <img
+                    ref={(img) => checkImageComplete(img, index)}
                     src={image.src}
                     alt={image.alt}
                     onLoad={() => handleImageLoad(index)}
