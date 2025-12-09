@@ -145,7 +145,7 @@ export default function PhotoUploader({ category, onUploadComplete }: PhotoUploa
           prev.map(p => p === `Uploading ${file.name}...` ? `✓ ${file.name}` : p)
         );
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : formatSupabaseError(error);
+        const errorMessage = formatSupabaseError(error);
         setUploadProgress(prev => 
           prev.map(p => p === `Uploading ${file.name}...` ? `✗ ${file.name}: ${errorMessage}` : p)
         );

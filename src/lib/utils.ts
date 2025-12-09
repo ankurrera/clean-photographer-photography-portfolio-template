@@ -8,6 +8,8 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Formats a Supabase error object into a readable error message
  * Handles both PostgrestError and StorageError types
+ * @param error - The error object from Supabase (PostgrestError, StorageError) or a standard Error instance
+ * @returns A formatted error message string with details, code, and hints when available
  */
 export function formatSupabaseError(error: unknown): string {
   if (error instanceof Error) {
