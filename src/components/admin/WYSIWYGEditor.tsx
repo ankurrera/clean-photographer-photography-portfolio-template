@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { PhotoLayoutData, EditorMode, DevicePreview, HistoryEntry } from '@/types/wysiwyg';
+import { PhotoLayoutData, EditorMode, DevicePreview, HistoryEntry, PhotoCategory } from '@/types/wysiwyg';
 import PortfolioHeader from '@/components/PortfolioHeader';
 import PhotographerBio from '@/components/PhotographerBio';
 import PortfolioFooter from '@/components/PortfolioFooter';
@@ -17,8 +17,8 @@ import {
 } from '@/components/ui/dialog';
 
 interface WYSIWYGEditorProps {
-  category: string;
-  onCategoryChange: (category: 'selected' | 'commissioned' | 'editorial' | 'personal') => void;
+  category: PhotoCategory;
+  onCategoryChange: (category: PhotoCategory) => void;
   onSignOut: () => void;
 }
 
@@ -46,7 +46,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
       const { data, error } = await supabase
         .from('photos')
         .select('*')
-        .eq('category', category)
+        .eq('category', category as 'selected' | 'commissioned' | 'editorial' | 'personal')
         .order('z_index', { ascending: true });
 
       if (error) throw error;

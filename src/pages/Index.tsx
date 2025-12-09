@@ -28,7 +28,7 @@ const Index = () => {
         const { data, error: fetchError } = await supabase
           .from('photos')
           .select('*')
-          .eq('category', activeCategory.toLowerCase())
+          .eq('category', 'selected' as const)
           .eq('is_draft', false)
           .order('display_order', { ascending: true });
 

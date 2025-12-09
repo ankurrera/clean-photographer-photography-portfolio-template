@@ -44,7 +44,7 @@ const CategoryGallery = () => {
 
         // Only filter by category if not 'all'
         if (validatedCategory !== 'all') {
-          query = query.eq('category', validatedCategory);
+          query = query.eq('category', validatedCategory as 'selected' | 'commissioned' | 'editorial' | 'personal');
         }
 
         const { data, error: fetchError } = await query;

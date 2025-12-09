@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { EditorMode, DevicePreview } from '@/types/wysiwyg';
+import { EditorMode, DevicePreview, PhotoCategory } from '@/types/wysiwyg';
 
 interface EditorToolbarProps {
   mode: EditorMode;
@@ -39,7 +39,7 @@ interface EditorToolbarProps {
   canUndo: boolean;
   canRedo: boolean;
   hasChanges: boolean;
-  category: string;
+  category: PhotoCategory;
   onModeChange: (mode: EditorMode) => void;
   onDevicePreviewChange: (device: DevicePreview) => void;
   onSnapToGridChange: (enabled: boolean) => void;
@@ -49,7 +49,7 @@ interface EditorToolbarProps {
   onPublish: () => void;
   onShowHistory: () => void;
   onAddPhoto: () => void;
-  onCategoryChange: (category: 'selected' | 'commissioned' | 'editorial' | 'personal') => void;
+  onCategoryChange: (category: PhotoCategory) => void;
   onSignOut: () => void;
 }
 
@@ -80,7 +80,7 @@ export default function EditorToolbar({
       <div className="container mx-auto px-4 py-2 flex items-center justify-between gap-4">
         {/* Left Section: Category Selector & Mode Toggle */}
         <div className="flex items-center gap-2">
-          <Select value={category} onValueChange={(value) => onCategoryChange(value as 'selected' | 'commissioned' | 'editorial' | 'personal')}>
+          <Select value={category} onValueChange={(value) => onCategoryChange(value as PhotoCategory)}>
             <SelectTrigger className="w-[140px]">
               <SelectValue />
             </SelectTrigger>

@@ -3,30 +3,36 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { PhotoCategory } from '@/types/wysiwyg';
 
 // Lazy load the WYSIWYGEditor component
 const WYSIWYGEditor = lazy(() => import('@/components/admin/WYSIWYGEditor'));
-
-type PhotoCategory = 'selected' | 'commissioned' | 'editorial' | 'personal';
 
 export default function Admin() {
   const { user, isAdmin, isLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<PhotoCategory>('selected');
+  const [authChecked, setAuthChecked] = useState(false);
 
+  // Single effect for auth redirect - only runs once auth is loaded
   useEffect(() => {
-    if (!isLoading && !user) {
-      navigate('/admin/login');
+    if (isLoading) return;
+    
+    // Mark auth as checked to prevent re-running
+    if (authChecked) return;
+    setAuthChecked(true);
+    
+    if (!user) {
+      navigate('/admin/login', { replace: true });
+      return;
     }
-  }, [user, isLoading, navigate]);
-
-  useEffect(() => {
-    if (!isLoading && user && !isAdmin) {
+    
+    if (!isAdmin) {
       toast.error('You do not have admin access');
       signOut();
-      navigate('/admin/login');
+      navigate('/admin/login', { replace: true });
     }
-  }, [isAdmin, isLoading, user, navigate, signOut]);
+  }, [user, isAdmin, isLoading, navigate, signOut, authChecked]);
 
   const handleSignOut = async () => {
     await signOut();
