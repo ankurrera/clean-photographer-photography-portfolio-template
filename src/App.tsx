@@ -24,17 +24,12 @@ const BodyClassManager = () => {
   const location = useLocation();
   
   useEffect(() => {
-    // Add 'admin-dashboard' class to body when on admin routes
+    // Add or remove 'admin-dashboard' class to body based on route
     if (location.pathname.startsWith('/admin')) {
       document.body.classList.add('admin-dashboard');
     } else {
       document.body.classList.remove('admin-dashboard');
     }
-    
-    // Cleanup function
-    return () => {
-      document.body.classList.remove('admin-dashboard');
-    };
   }, [location.pathname]);
   
   return null;
