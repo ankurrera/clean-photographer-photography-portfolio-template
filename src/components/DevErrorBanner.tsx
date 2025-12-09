@@ -27,7 +27,7 @@ const DevErrorBanner = ({ error, details }: DevErrorBannerProps) => {
               <summary className="text-xs cursor-pointer hover:underline">
                 Technical Details
               </summary>
-              <pre className="text-xs mt-1 overflow-auto max-h-32 bg-black/20 p-2 rounded">
+              <pre className="text-xs mt-1 overflow-auto max-h-32 bg-destructive/10 p-2 rounded">
                 {details}
               </pre>
             </details>

@@ -391,7 +391,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
         onSignOut={onSignOut}
       />
 
-      <div className="flex flex-col min-h-screen pt-24 bg-background">{/* Changed to flex layout */}
+      <div className="flex flex-col min-h-screen pt-24 bg-background">
         {/* Preview Container */}
         <div 
           className="flex-1 mx-auto transition-all duration-300"

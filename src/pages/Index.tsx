@@ -78,11 +78,11 @@ const Index = () => {
         }));
 
         setDisplayImages(transformedImages);
-      } catch (err: any) {
+      } catch (err: unknown) {
         clearTimeout(timeoutId);
 
         // Don't show error if request was aborted intentionally
-        if (err.name === 'AbortError' || abortControllerRef.current?.signal.aborted) {
+        if (err instanceof Error && (err.name === 'AbortError' || abortControllerRef.current?.signal.aborted)) {
           console.warn('[Index] Request aborted (timeout or navigation)');
           setError('Request timed out. Please check your network connection.');
           setErrorDetails('The request took longer than 15 seconds to complete.');
@@ -90,7 +90,7 @@ const Index = () => {
         }
         
         console.error('[Index] Error fetching photos from Supabase:', err);
-        const errorMessage = err?.message || 'Unknown error occurred';
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
         setError('Failed to load images. Please try again later.');
         setErrorDetails(`Error: ${errorMessage}\n\nCheck browser console and network tab for more details.`);
       } finally {
