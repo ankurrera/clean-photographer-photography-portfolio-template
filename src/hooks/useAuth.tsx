@@ -91,7 +91,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     
     if (error) {
-      console.error('SignUp error:', error);
+      // Only log errors in development to avoid exposing sensitive information
+      if (import.meta.env.DEV) {
+        console.error('SignUp error:', error);
+      }
       return { error };
     }
     

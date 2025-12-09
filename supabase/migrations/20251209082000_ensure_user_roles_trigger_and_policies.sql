@@ -26,22 +26,12 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_new_user();
 
--- Verify that users can view their own role (this policy should already exist from previous migration)
--- We use DO block to avoid errors if the policy already exists
-DO $$ 
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_policies 
-    WHERE tablename = 'user_roles' 
-    AND policyname = 'Users can view their own role'
-  ) THEN
-    CREATE POLICY "Users can view their own role"
-    ON public.user_roles
-    FOR SELECT
-    TO authenticated
-    USING (user_id = auth.uid());
-  END IF;
-END $$;
+-- Ensure that users can view their own role (this policy should already exist from previous migration)
+CREATE POLICY IF NOT EXISTS "Users can view their own role"
+ON public.user_roles
+FOR SELECT
+TO authenticated
+USING (user_id = auth.uid());
 
 -- Grant necessary permissions to ensure the trigger can execute
 GRANT USAGE ON SCHEMA public TO postgres, anon, authenticated, service_role;
