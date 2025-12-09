@@ -34,5 +34,6 @@ TO authenticated
 USING (user_id = auth.uid());
 
 -- Grant necessary permissions to ensure the trigger can execute
+-- The trigger function runs with SECURITY DEFINER and needs to insert into user_roles
 GRANT USAGE ON SCHEMA public TO postgres, anon, authenticated, service_role;
-GRANT ALL ON public.user_roles TO postgres, service_role;
+GRANT SELECT, INSERT ON public.user_roles TO postgres, service_role;
