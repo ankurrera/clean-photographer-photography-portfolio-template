@@ -211,6 +211,7 @@ const LayoutGallery = ({ images, onImageClick }: LayoutGalleryProps) => {
           {sortedImages.map((image, index) => {
             const width = image.width || 300;
             const height = image.height || 400;
+            const aspectRatio = height / width;
 
             return (
               <button
@@ -218,93 +219,91 @@ const LayoutGallery = ({ images, onImageClick }: LayoutGalleryProps) => {
                 onClick={() => onImageClick(index)}
                 onMouseEnter={() => handleImageHover(index)}
                 onMouseLeave={handleImageLeave}
-                className="cursor-zoom-in select-none group"
-                style={{
-                  width: `${width}px`,
-                  maxWidth: '100%',
-                }}
+                className="w-full cursor-zoom-in select-none group"
               >
                 <div 
                   className="relative w-full overflow-hidden rounded-sm shadow-lg"
                   style={{
-                    height: `${height}px`,
+                    paddingBottom: `${aspectRatio * 100}%`,
                   }}
                 >
-                  {image.type === "video" ? (
-                    <video
-                      poster={image.src}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      onLoadedData={() => handleImageLoad(index)}
-                      className={`w-full h-full object-cover transition-all duration-400 ${
-                        hoveredIndex !== null && hoveredIndex !== index
-                          ? "grayscale"
-                          : ""
-                      }`}
-                      style={{
-                        opacity: loadedImages.has(index) ? 1 : 0,
-                        transition: "opacity 0.5s ease-out",
-                      }}
-                    >
-                      <source src={image.videoSrc} type="video/mp4" />
-                    </video>
-                  ) : (
-                    <img
-                      src={image.src}
-                      alt={image.alt}
-                      onLoad={() => handleImageLoad(index)}
-                      className={`w-full h-full object-cover transition-all duration-400 ${
-                        hoveredIndex !== null && hoveredIndex !== index
-                          ? "grayscale"
-                          : ""
-                      }`}
-                      style={{
-                        opacity: loadedImages.has(index) ? 1 : 0,
-                        transition: "opacity 0.5s ease-out",
-                      }}
-                      loading="lazy"
-                    />
-                  )}
-                  <ProgressiveBlur
-                    className="pointer-events-none absolute bottom-0 left-0 h-[80%] w-full"
-                    blurIntensity={0.6}
-                    animate={hoveredIndex === index ? "visible" : "hidden"}
-                    variants={{
-                      hidden: { opacity: 0 },
-                      visible: { opacity: 1 },
-                    }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                  />
-                  {(image.photographer_name || image.date_taken) && (
-                    <motion.div
-                      className="absolute bottom-0 left-0 w-full pointer-events-none"
+                  <div className="absolute inset-0">
+                    {image.type === "video" ? (
+                      <video
+                        poster={image.src}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        onLoadedData={() => handleImageLoad(index)}
+                        className={`w-full h-full object-cover transition-all duration-400 ${
+                          hoveredIndex !== null && hoveredIndex !== index
+                            ? "grayscale"
+                            : ""
+                        }`}
+                        style={{
+                          opacity: loadedImages.has(index) ? 1 : 0,
+                          transition: "opacity 0.5s ease-out",
+                        }}
+                      >
+                        <source src={image.videoSrc} type="video/mp4" />
+                      </video>
+                    ) : (
+                      <img
+                        src={image.src}
+                        alt={image.alt}
+                        onLoad={() => handleImageLoad(index)}
+                        className={`w-full h-full object-cover transition-all duration-400 ${
+                          hoveredIndex !== null && hoveredIndex !== index
+                            ? "grayscale"
+                            : ""
+                        }`}
+                        style={{
+                          opacity: loadedImages.has(index) ? 1 : 0,
+                          transition: "opacity 0.5s ease-out",
+                        }}
+                        loading="lazy"
+                      />
+                    )}
+                    <ProgressiveBlur
+                      className="pointer-events-none absolute bottom-0 left-0 h-[80%] w-full"
+                      blurIntensity={0.6}
                       animate={hoveredIndex === index ? "visible" : "hidden"}
                       variants={{
                         hidden: { opacity: 0 },
                         visible: { opacity: 1 },
                       }}
                       transition={{ duration: 0.2, ease: "easeOut" }}
-                    >
-                      <div className="flex flex-col items-center gap-0.5 px-4 py-3 text-center">
-                        {image.photographer_name && (
-                          <p className="text-sm font-medium text-white">
-                            Shot by {image.photographer_name}
-                          </p>
-                        )}
-                        {image.date_taken && (
-                          <span className="text-xs text-white/90">
-                            {new Date(image.date_taken).toLocaleDateString('en-US', { 
-                              year: 'numeric', 
-                              month: 'long', 
-                              day: 'numeric' 
-                            })}
-                          </span>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
+                    />
+                    {(image.photographer_name || image.date_taken) && (
+                      <motion.div
+                        className="absolute bottom-0 left-0 w-full pointer-events-none"
+                        animate={hoveredIndex === index ? "visible" : "hidden"}
+                        variants={{
+                          hidden: { opacity: 0 },
+                          visible: { opacity: 1 },
+                        }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                      >
+                        <div className="flex flex-col items-center gap-0.5 px-4 py-3 text-center">
+                          {image.photographer_name && (
+                            <p className="text-sm font-medium text-white">
+                              Shot by {image.photographer_name}
+                            </p>
+                          )}
+                          {image.date_taken && (
+                            <span className="text-xs text-white/90">
+                              {new Date(image.date_taken).toLocaleDateString('en-US', { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric' 
+                              })}
+                            </span>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </div>
                 </div>
               </button>
             );
