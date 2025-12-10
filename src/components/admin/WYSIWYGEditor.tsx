@@ -142,15 +142,21 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
   useEffect(() => {
     // Force a re-render of draggable components when device preview changes
     // This ensures motion library recalculates positions and placeholders
+    let frame: number | null = null;
+    
     if (devicePreview !== 'desktop') {
       // Use requestAnimationFrame for better performance
-      const frame = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => {
         // Trigger layout recalculation by dispatching resize event
         window.dispatchEvent(new Event('resize'));
       });
-      
-      return () => cancelAnimationFrame(frame);
     }
+    
+    return () => {
+      if (frame !== null) {
+        cancelAnimationFrame(frame);
+      }
+    };
   }, [devicePreview]);
 
   // Add to history
