@@ -405,7 +405,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
         onSignOut={onSignOut}
       />
 
-      <div className="flex flex-col min-h-screen pt-24 bg-background overflow-y-auto">
+      <div className="flex flex-col min-h-screen pt-24 bg-background overflow-y-auto overflow-x-hidden">
         {/* Preview Container */}
         <div 
           className="flex-1 mx-auto transition-all duration-300 flex flex-col"
@@ -422,9 +422,10 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
 
             {/* Photo Canvas - Dynamic height based on content */}
             <div 
-              className="relative max-w-[1600px] mx-auto px-3 md:px-5 flex-1"
+              className="relative w-full mx-auto px-3 md:px-5"
               style={{
                 minHeight: `${calculateCanvasHeight()}px`,
+                height: `${calculateCanvasHeight()}px`,
               }}
             >
               {/* Grid overlay when snap-to-grid is enabled */}
@@ -437,6 +438,8 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
                       repeating-linear-gradient(90deg, transparent, transparent 19px, #888 19px, #888 20px)
                     `,
                     backgroundSize: '20px 20px',
+                    width: '100%',
+                    height: '100%',
                   }}
                 />
               )}
