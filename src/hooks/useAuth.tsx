@@ -22,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const checkAdminRole = async (userId: string) => {
+    console.log('[useAuth] Checking admin role for user:', userId);
     const { data, error } = await supabase
       .from('user_roles')
       .select('role')
@@ -31,10 +32,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     if (error) {
       const errorMessage = formatSupabaseError(error);
-      console.error('Error checking admin role:', errorMessage);
+      console.error('[useAuth] Error checking admin role:', errorMessage);
       return false;
     }
-    return !!data;
+    const isAdmin = !!data;
+    console.log('[useAuth] Admin role check result:', { hasData: !!data, isAdmin });
+    return isAdmin;
   };
 
   useEffect(() => {
@@ -42,6 +45,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // IMPORTANT: Use synchronous state updates only, defer async work with setTimeout
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        // Set loading state immediately when auth state changes
+        setIsLoading(true);
+        
         // Synchronous state update
         setSession(session);
         setUser(session?.user ?? null);
