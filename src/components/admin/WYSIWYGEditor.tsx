@@ -23,6 +23,9 @@ interface WYSIWYGEditorProps {
   onSignOut: () => void;
 }
 
+// Desktop canvas baseline width for device preview scaling
+const DESKTOP_CANVAS_WIDTH = 1600;
+
 export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }: WYSIWYGEditorProps) {
   const [photos, setPhotos] = useState<PhotoLayoutData[]>([]);
   const [mode, setMode] = useState<EditorMode>('edit');
@@ -416,17 +419,15 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
   }, [photos]);
 
   // Calculate scale factor for device preview
-  // Desktop baseline is 1600px (max-width), we scale down for smaller devices
+  // Desktop baseline is DESKTOP_CANVAS_WIDTH, we scale down for smaller devices
   const getDeviceScaleFactor = useCallback(() => {
-    const desktopBaseWidth = 1600; // Reference width for desktop layout
-    
     switch (devicePreview) {
       case 'mobile':
         // 420px / 1600px = 0.2625
-        return 420 / desktopBaseWidth;
+        return 420 / DESKTOP_CANVAS_WIDTH;
       case 'tablet':
         // 900px / 1600px = 0.5625
-        return 900 / desktopBaseWidth;
+        return 900 / DESKTOP_CANVAS_WIDTH;
       case 'desktop':
       default:
         return 1; // No scaling
@@ -470,7 +471,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
             className="flex-1 transition-all duration-300 flex flex-col relative"
             style={{ 
               width: getDeviceWidth(),
-              maxWidth: devicePreview === 'desktop' ? '1600px' : getDeviceWidth(),
+              maxWidth: devicePreview === 'desktop' ? `${DESKTOP_CANVAS_WIDTH}px` : getDeviceWidth(),
             }}
           >
             {/* Dashed device outline for tablet/mobile previews */}
@@ -500,7 +501,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
                   className="gallery-wrapper-outer relative mx-auto"
                   style={{
                     width: devicePreview === 'desktop' ? '100%' : getDeviceWidth(),
-                    maxWidth: devicePreview === 'desktop' ? '1600px' : 'none',
+                    maxWidth: devicePreview === 'desktop' ? `${DESKTOP_CANVAS_WIDTH}px` : 'none',
                   }}
                 >
                   <div 
@@ -508,7 +509,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
                     style={{
                       minHeight: `${canvasHeight}px`,
                       height: `${canvasHeight}px`,
-                      width: '1600px',
+                      width: `${DESKTOP_CANVAS_WIDTH}px`,
                       zoom: scaleFactor,
                     }}
                   >
