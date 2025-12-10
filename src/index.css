@@ -117,8 +117,8 @@ All colors MUST be HSL.
     display: grid;
     justify-content: center;
     gap: 1rem;
-    /* Mobile: single column, max 360px */
-    grid-template-columns: minmax(0, min(360px, 100%));
+    /* Mobile: single column, max 360px centered */
+    grid-template-columns: minmax(0, 360px);
   }
 
   /* Tablet: 2-3 columns with 220px cards */

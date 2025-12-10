@@ -18,7 +18,7 @@ interface LayoutGalleryProps {
 const LayoutGallery = ({ images, onImageClick }: LayoutGalleryProps) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleImageLoad = (index: number) => {
     setLoadedImages((prev) => new Set(prev).add(index));
@@ -67,10 +67,7 @@ const LayoutGallery = ({ images, onImageClick }: LayoutGalleryProps) => {
             className="w-full cursor-zoom-in select-none group"
           >
             <div 
-              className="relative w-full overflow-hidden rounded-sm shadow-lg"
-              style={{
-                aspectRatio: '4 / 5',
-              }}
+              className="relative w-full overflow-hidden rounded-sm shadow-lg aspect-[4/5]"
             >
               {image.type === "video" ? (
                 <video
