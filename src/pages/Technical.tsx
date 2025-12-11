@@ -1,29 +1,45 @@
-import PortfolioHeader from "@/components/PortfolioHeader";
-import PortfolioFooter from "@/components/PortfolioFooter";
-import PageLayout from "@/components/PageLayout";
-import SEO from "@/components/SEO";
+import { motion } from 'motion/react';
+import MinimalNavigation from '@/components/MinimalNavigation';
+import MinimalHero from '@/components/MinimalHero';
+import MinimalProjects from '@/components/MinimalProjects';
+import MinimalAbout from '@/components/MinimalAbout';
+import MinimalContact from '@/components/MinimalContact';
 
 const Technical = () => {
   return (
-    <PageLayout>
-      <SEO 
-        title="Technical | Raya"
-        description="Technical photography work showcasing precision, detail, and craftsmanship."
-        canonicalUrl="/technical"
-      />
-      <PortfolioHeader activeCategory="TECHNICAL" />
-      <main id="main-content" className="min-h-screen pt-24 px-4 md:px-8 pb-16">
-        <div className="max-w-[1200px] mx-auto">
-          <h1 className="text-3xl md:text-4xl font-light tracking-wide mb-8 text-center">
-            Technical
-          </h1>
-          <p className="text-muted-foreground text-center max-w-2xl mx-auto">
-            Technical photography work coming soon. This section will showcase precision, detail, and craftsmanship in photography.
-          </p>
-        </div>
+    <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <MinimalNavigation />
+      
+      {/* Main Content */}
+      <main>
+        <MinimalHero />
+        <MinimalProjects />
+        <MinimalAbout />
+        <MinimalContact />
       </main>
-      <PortfolioFooter />
-    </PageLayout>
+      
+      {/* Footer */}
+      <footer className="py-12 border-t border-border/50 bg-muted/10">
+        <div className="max-w-content mx-auto px-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <motion.div 
+              className="text-lg font-heading font-medium text-foreground" 
+              whileHover={{
+                scale: 1.02
+              }}
+            >
+              Ankur Bag
+            </motion.div>
+            
+            <div className="flex items-center gap-8 text-xs font-mono text-muted-foreground">
+              <div>© 2025 All rights reserved</div>
+              <div>Making projects with precision & passion</div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 };
 
