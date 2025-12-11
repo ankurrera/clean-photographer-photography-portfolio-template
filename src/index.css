@@ -47,6 +47,14 @@ All colors MUST be HSL.
     --gray-600: 0 0% 40%;
     --gray-800: 0 0% 15%;
     --gray-900: 0 0% 10%;
+
+    /* Status Colors for minimal components */
+    --success: 120 40% 40%;
+    --warning: 45 80% 55%;
+
+    /* Spacing & Sizing for minimal components */
+    --content-width: 1200px;
+    --section-padding: 120px;
   }
 
   .dark {
@@ -90,6 +98,49 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
+  /* Minimal component styles */
+  .py-section {
+    padding-top: var(--section-padding);
+    padding-bottom: var(--section-padding);
+  }
+
+  .max-w-content {
+    max-width: var(--content-width);
+  }
+
+  .text-section {
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 300;
+    line-height: 1.2;
+  }
+
+  .text-success {
+    color: hsl(var(--success));
+  }
+
+  .text-warning {
+    color: hsl(var(--warning));
+  }
+
+  .font-heading {
+    font-family: var(--font-inter, Inter, sans-serif);
+  }
+
+  .font-mono {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  }
+
+  /* Clean Card Style */
+  .minimal-card {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .minimal-card:hover {
+    transform: translateY(-2px);
+  }
+
   .animate-marquee-rtl {
     animation: marquee-rtl 40s linear infinite;
   }

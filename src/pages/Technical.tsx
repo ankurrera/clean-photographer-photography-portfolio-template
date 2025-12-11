@@ -2,6 +2,9 @@ import PortfolioHeader from "@/components/PortfolioHeader";
 import PortfolioFooter from "@/components/PortfolioFooter";
 import PageLayout from "@/components/PageLayout";
 import SEO from "@/components/SEO";
+import MinimalProjects from "@/components/MinimalProjects";
+import MinimalAbout from "@/components/MinimalAbout";
+import MinimalContact from "@/components/MinimalContact";
 
 const Technical = () => {
   return (
@@ -21,6 +24,11 @@ const Technical = () => {
             Technical photography work coming soon. This section will showcase precision, detail, and craftsmanship in photography.
           </p>
         </div>
+        
+        {/* Home body content from Portfolio-Website */}
+        <MinimalProjects />
+        <MinimalAbout />
+        <MinimalContact />
       </main>
       <PortfolioFooter />
     </PageLayout>
