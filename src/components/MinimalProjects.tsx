@@ -1,47 +1,67 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight, Github } from 'lucide-react';
+import { ArrowUpRight, Github, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { TechnicalProject } from '@/types/technical';
 
 const MinimalProjects = () => {
-  const projects = [
-    {
-      id: '01',
-      title: 'AI Analytics Dashboard',
-      description: 'Real-time data visualization platform with machine learning insights for enterprise clients.',
-      tech: ['React', 'TypeScript', 'Python', 'TensorFlow'],
-      year: '2024',
-      status: 'Live',
-      link: '#'
-    },
-    {
-      id: '02',
-      title: 'Blockchain Wallet',
-      description: 'Secure multi-chain cryptocurrency wallet with DeFi integration and advanced security features.',
-      tech: ['Next.js', 'Web3', 'Solidity', 'Node.js'],
-      year: '2023',
-      status: 'In Development',
-      link: '#'
-    },
-    {
-      id: '03',
-      title: 'E-commerce Platform',
-      description: 'Modern shopping experience with AR try-on features and personalized recommendations.',
-      tech: ['Vue.js', 'Express', 'MongoDB', 'AWS'],
-      year: '2023',
-      status: 'Live',
-      link: '#'
-    },
-    {
-      id: '04',
-      title: 'IoT Management System',
-      description: 'Comprehensive platform for monitoring and controlling smart devices across multiple locations.',
-      tech: ['React Native', 'MQTT', 'PostgreSQL', 'Docker'],
-      year: '2022',
-      status: 'Live',
-      link: '#'
+  const [projects, setProjects] = useState<TechnicalProject[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  const loadProjects = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('technical_projects')
+        .select('*')
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+
+      // Parse languages from JSONB
+      const parsedProjects = data.map(project => ({
+        ...project,
+        languages: Array.isArray(project.languages) 
+          ? project.languages 
+          : JSON.parse(project.languages as string)
+      })) as TechnicalProject[];
+
+      setProjects(parsedProjects);
+    } catch (error) {
+      console.error('Error loading projects:', error);
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
+
+  if (isLoading) {
+    return (
+      <section id="work" className="py-section bg-background">
+        <div className="max-w-content mx-auto px-8">
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (projects.length === 0) {
+    return (
+      <section id="work" className="py-section bg-background">
+        <div className="max-w-content mx-auto px-8">
+          <div className="text-center py-20 text-muted-foreground">
+            No projects available yet.
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="work" className="py-section bg-background">
@@ -87,7 +107,7 @@ const MinimalProjects = () => {
                     {/* Project Number */}
                     <div className="order-1 lg:order-1">
                       <div className="text-6xl font-heading font-light text-muted-foreground/30 group-hover:text-muted-foreground/60 transition-colors">
-                        {project.id}
+                        {String(index + 1).padStart(2, '0')}
                       </div>
                     </div>
 
@@ -103,7 +123,7 @@ const MinimalProjects = () => {
                       </div>
                       
                       <div className="flex flex-wrap gap-2">
-                        {project.tech.map((tech) => (
+                        {project.languages.map((tech) => (
                           <span 
                             key={tech} 
                             className="text-xs font-mono text-muted-foreground/60 px-2 py-1 bg-muted/30 rounded"
@@ -118,30 +138,40 @@ const MinimalProjects = () => {
                     <div className="order-2 lg:order-3 flex lg:flex-col items-start lg:items-end justify-between lg:justify-start gap-4">
                       <div className="text-right">
                         <div className="text-sm font-medium text-foreground mb-1">
-                          {project.year}
+                          {project.dev_year}
                         </div>
                         <div className={`text-xs font-mono uppercase tracking-widest ${
                           project.status === 'Live' ? 'text-success' : 'text-warning'
                         }`}>
-                          {project.status}
+                          {project.status || 'Live'}
                         </div>
                       </div>
                       
                       <div className="flex gap-2">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 hover:bg-muted/50"
-                        >
-                          <ArrowUpRight className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 hover:bg-muted/50"
-                        >
-                          <Github className="w-4 h-4" />
-                        </Button>
+                        {project.live_link && (
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 hover:bg-muted/50"
+                            asChild
+                          >
+                            <a href={project.live_link} target="_blank" rel="noopener noreferrer">
+                              <ArrowUpRight className="w-4 h-4" />
+                            </a>
+                          </Button>
+                        )}
+                        {project.github_link && (
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 hover:bg-muted/50"
+                            asChild
+                          >
+                            <a href={project.github_link} target="_blank" rel="noopener noreferrer">
+                              <Github className="w-4 h-4" />
+                            </a>
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </div>

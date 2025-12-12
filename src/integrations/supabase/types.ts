@@ -74,6 +74,51 @@ export type Database = {
         }
         Relationships: []
       }
+      technical_projects: {
+        Row: {
+          created_at: string
+          description: string
+          dev_year: string
+          display_order: number
+          github_link: string | null
+          id: string
+          languages: Json
+          live_link: string | null
+          status: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          dev_year: string
+          display_order?: number
+          github_link?: string | null
+          id?: string
+          languages?: Json
+          live_link?: string | null
+          status?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          dev_year?: string
+          display_order?: number
+          github_link?: string | null
+          id?: string
+          languages?: Json
+          live_link?: string | null
+          status?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
