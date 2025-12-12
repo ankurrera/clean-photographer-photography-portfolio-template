@@ -186,7 +186,7 @@ export default function ArtworkEditPanel({ artwork, onClose, onUpdate }: Artwork
           <div className="space-y-2">
             <Label className="text-sm font-medium">Process Images ({artwork.process_images.length})</Label>
             <div className="grid grid-cols-2 gap-2">
-              {artwork.process_images.slice(0, 4).map((img: { url: string; caption?: string }, index: number) => (
+              {artwork.process_images.slice(0, 4).map((img: { url: string; original_url?: string; caption?: string }, index: number) => (
                 <div key={index} className="relative aspect-square">
                   <img
                     src={img.url}

@@ -167,51 +167,62 @@ export default function ArtworkUploader({ onUploadComplete }: ArtworkUploaderPro
         setUploadProgress(prev => [...prev, `Uploading ${processImages.length} process image(s)...`]);
         
         for (const processImg of processImages) {
-          const procDimensions = await getImageDimensions(processImg);
-          const procSanitizedName = processImg.name
-            .replace(/\.[^/.]+$/, '')
-            .replace(/[^a-zA-Z0-9]/g, '-')
-            .replace(/-+/g, '-')
-            .replace(/^-|-$/g, '');
-          
-          // Upload original
-          const procOrigExt = processImg.name.split('.').pop() || 'jpg';
-          const procOrigFileName = `artworks/originals/process/${Date.now()}-${procSanitizedName}.${procOrigExt}`;
-          
-          await supabase.storage
-            .from('photos')
-            .upload(procOrigFileName, processImg, {
-              contentType: processImg.type,
-              cacheControl: '31536000'
+          try {
+            const procDimensions = await getImageDimensions(processImg);
+            const procSanitizedName = processImg.name
+              .replace(/\.[^/.]+$/, '')
+              .replace(/[^a-zA-Z0-9]/g, '-')
+              .replace(/-+/g, '-')
+              .replace(/^-|-$/g, '');
+            
+            // Upload original
+            const procOrigExt = processImg.name.split('.').pop() || 'jpg';
+            const procOrigFileName = `artworks/originals/process/${Date.now()}-${procSanitizedName}.${procOrigExt}`;
+            
+            const { error: procOrigError } = await supabase.storage
+              .from('photos')
+              .upload(procOrigFileName, processImg, {
+                contentType: processImg.type,
+                cacheControl: '31536000'
+              });
+
+            if (procOrigError) throw procOrigError;
+
+            const { data: { publicUrl: procOrigUrl } } = supabase.storage
+              .from('photos')
+              .getPublicUrl(procOrigFileName);
+
+            // Upload derivative
+            const procDerivBlob = await generateDerivative(processImg, procDimensions.width, procDimensions.height);
+            const procDerivFileName = `artworks/derivatives/process/${Date.now()}-${procSanitizedName}.webp`;
+            
+            const { error: procDerivError } = await supabase.storage
+              .from('photos')
+              .upload(procDerivFileName, procDerivBlob, {
+                contentType: 'image/webp',
+                cacheControl: '31536000'
+              });
+
+            if (procDerivError) throw procDerivError;
+
+            const { data: { publicUrl: procDerivUrl } } = supabase.storage
+              .from('photos')
+              .getPublicUrl(procDerivFileName);
+
+            processImagesData.push({
+              url: procDerivUrl,
+              original_url: procOrigUrl,
+              caption: processImg.name.replace(/\.[^/.]+$/, ''),
             });
-
-          const { data: { publicUrl: procOrigUrl } } = supabase.storage
-            .from('photos')
-            .getPublicUrl(procOrigFileName);
-
-          // Upload derivative
-          const procDerivBlob = await generateDerivative(processImg, procDimensions.width, procDimensions.height);
-          const procDerivFileName = `artworks/derivatives/process/${Date.now()}-${procSanitizedName}.webp`;
-          
-          await supabase.storage
-            .from('photos')
-            .upload(procDerivFileName, procDerivBlob, {
-              contentType: 'image/webp',
-              cacheControl: '31536000'
-            });
-
-          const { data: { publicUrl: procDerivUrl } } = supabase.storage
-            .from('photos')
-            .getPublicUrl(procDerivFileName);
-
-          processImagesData.push({
-            url: procDerivUrl,
-            original_url: procOrigUrl,
-            caption: processImg.name.replace(/\.[^/.]+$/, ''),
-          });
+          } catch (error) {
+            const errorMessage = formatSupabaseError(error);
+            console.error(`Error uploading process image ${processImg.name}:`, errorMessage);
+            setUploadProgress(prev => [...prev, `⚠️ Warning: Failed to upload process image ${processImg.name}`]);
+            // Continue with other process images
+          }
         }
         
-        setUploadProgress(prev => [...prev, '✓ Process images uploaded']);
+        setUploadProgress(prev => [...prev, `✓ Uploaded ${processImagesData.length}/${processImages.length} process image(s)`]);
       }
 
       // Get current max z_index
