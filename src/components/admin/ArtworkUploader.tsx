@@ -70,8 +70,8 @@ export default function ArtworkUploader({ onUploadComplete }: ArtworkUploaderPro
     });
   }, []);
 
-  // Validate form
-  const validate = (): boolean => {
+  const uploadArtwork = useCallback(async () => {
+    // Validate form inline
     const newErrors: Record<string, string> = {};
 
     if (!metadata.title?.trim()) {
@@ -102,11 +102,8 @@ export default function ArtworkUploader({ onUploadComplete }: ArtworkUploaderPro
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const uploadArtwork = useCallback(async () => {
-    if (!validate()) {
+    
+    if (Object.keys(newErrors).length > 0) {
       toast.error('Please fix validation errors');
       return;
     }
@@ -291,7 +288,7 @@ export default function ArtworkUploader({ onUploadComplete }: ArtworkUploaderPro
     } finally {
       setUploading(false);
     }
-  }, [metadata, primaryImage, processImages, isPublished, generateDerivative, getImageDimensions, validate, onUploadComplete]);
+  }, [metadata, primaryImage, processImages, isPublished, generateDerivative, getImageDimensions, onUploadComplete]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();

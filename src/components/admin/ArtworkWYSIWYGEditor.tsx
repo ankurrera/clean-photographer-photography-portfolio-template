@@ -185,7 +185,7 @@ export default function ArtworkWYSIWYGEditor({ onSignOut }: ArtworkWYSIWYGEditor
 
       // Delete process images
       if (Array.isArray(artwork.process_images)) {
-        artwork.process_images.forEach((img: any) => {
+        artwork.process_images.forEach((img: { url?: string; original_url?: string }) => {
           if (img.url) {
             const urlParts = img.url.split('/photos/');
             if (urlParts.length > 1) filesToDelete.push(urlParts[1]);
@@ -313,7 +313,7 @@ export default function ArtworkWYSIWYGEditor({ onSignOut }: ArtworkWYSIWYGEditor
         mode={mode}
         devicePreview={devicePreview}
         snapToGrid={snapToGrid}
-        category={'artistic' as any}
+        category={'artistic' as 'selected' | 'commissioned' | 'editorial' | 'personal' | 'artistic'}
         hasUnsavedChanges={hasUnsavedChanges}
         onModeChange={setMode}
         onDevicePreviewChange={setDevicePreview}
