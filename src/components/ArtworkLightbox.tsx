@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { ArtworkData } from "@/types/artwork";
 
+// Artist credit constants
+const ARTIST_NAME = "Ankur Bag.";
+const COPYRIGHT_TEXT = "© Ankur Bag.";
+
 interface ArtworkLightboxProps {
   artworks: ArtworkData[];
   initialIndex: number;
@@ -202,12 +206,12 @@ const ArtworkLightbox = ({ artworks, initialIndex, onClose }: ArtworkLightboxPro
 
       {/* BOTTOM LEFT CORNER - Artist Credit */}
       <div className="fixed bottom-8 left-8 z-[101] text-foreground/60 text-sm font-inter pointer-events-none px-4 md:px-0">
-        Ankur Bag.
+        {ARTIST_NAME}
       </div>
 
       {/* BOTTOM CENTER - Copyright */}
       <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-[101] text-foreground/60 text-xs font-inter pointer-events-none px-4 md:px-0">
-        © Ankur Bag.
+        {COPYRIGHT_TEXT}
       </div>
 
       {/* Image Container */}
