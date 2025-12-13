@@ -35,6 +35,10 @@ export default function ArtworkWYSIWYGEditor({ onSignOut }: ArtworkWYSIWYGEditor
   const [editingArtworkId, setEditingArtworkId] = useState<string | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   
+  // History management (simplified for artworks)
+  const [historyIndex] = useState(0);
+  const [history] = useState<any[]>([]);
+  
   // Autosave
   const autosaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -274,6 +278,56 @@ export default function ArtworkWYSIWYGEditor({ onSignOut }: ArtworkWYSIWYGEditor
     }
   };
 
+  const handlePublish = async () => {
+    try {
+      toast.info('Publishing all artworks...');
+      
+      // Save all artworks and ensure they are published
+      const updates = artworks.map((artwork) => ({
+        id: artwork.id,
+        position_x: artwork.position_x,
+        position_y: artwork.position_y,
+        width: artwork.width,
+        height: artwork.height,
+        scale: artwork.scale,
+        rotation: artwork.rotation,
+        z_index: artwork.z_index,
+        is_published: true,
+      }));
+
+      for (const update of updates) {
+        const { error } = await supabase
+          .from('artworks')
+          .update(update)
+          .eq('id', update.id);
+        
+        if (error) throw error;
+      }
+
+      setHasUnsavedChanges(false);
+      toast.success('All artworks published successfully!');
+    } catch (error) {
+      const errorMessage = formatSupabaseError(error);
+      console.error('Publish error:', errorMessage);
+      toast.error(`Failed to publish: ${errorMessage}`);
+    }
+  };
+
+  const handleUndo = useCallback(() => {
+    // Placeholder for undo functionality
+    toast.info('Undo not yet implemented for artwork editor');
+  }, []);
+
+  const handleRedo = useCallback(() => {
+    // Placeholder for redo functionality
+    toast.info('Redo not yet implemented for artwork editor');
+  }, []);
+
+  const handleShowHistory = useCallback(() => {
+    // Placeholder for history functionality
+    toast.info('History not yet implemented for artwork editor');
+  }, []);
+
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -303,8 +357,23 @@ export default function ArtworkWYSIWYGEditor({ onSignOut }: ArtworkWYSIWYGEditor
     }
   };
 
+  // Calculate canvas height dynamically based on artwork positions
+  const calculateCanvasHeight = useCallback(() => {
+    if (artworks.length === 0) return 800;
+    
+    let maxExtent = 0;
+    artworks.forEach((artwork) => {
+      const bottomExtent = artwork.position_y + (artwork.height * artwork.scale);
+      maxExtent = Math.max(maxExtent, bottomExtent);
+    });
+    
+    // Add padding for comfortable editing
+    return Math.max(800, maxExtent + 300);
+  }, [artworks]);
+
   const scaleFactor = getScaleFactor();
   const canvasWidth = DESKTOP_CANVAS_WIDTH * scaleFactor;
+  const canvasHeight = calculateCanvasHeight();
 
   return (
     <div className="flex flex-col h-screen bg-background">
@@ -313,15 +382,22 @@ export default function ArtworkWYSIWYGEditor({ onSignOut }: ArtworkWYSIWYGEditor
         mode={mode}
         devicePreview={devicePreview}
         snapToGrid={snapToGrid}
+        canUndo={historyIndex > 0}
+        canRedo={historyIndex < history.length - 1}
+        hasChanges={hasUnsavedChanges}
         category={'artistic' as 'selected' | 'commissioned' | 'editorial' | 'personal' | 'artistic'}
-        hasUnsavedChanges={hasUnsavedChanges}
+        isRefreshing={isRefreshing}
         onModeChange={setMode}
         onDevicePreviewChange={setDevicePreview}
         onSnapToGridChange={setSnapToGrid}
-        onCategoryChange={() => {}} // No category switching for artistic
-        onUpload={() => setShowUploader(true)}
-        onRefresh={() => fetchArtworks(true)}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
         onSave={handleSaveAll}
+        onPublish={handlePublish}
+        onShowHistory={handleShowHistory}
+        onAddPhoto={() => setShowUploader(true)}
+        onRefresh={() => fetchArtworks(true)}
+        onCategoryChange={() => {}} // No category switching for artistic
         onSignOut={onSignOut}
       />
 
@@ -332,7 +408,7 @@ export default function ArtworkWYSIWYGEditor({ onSignOut }: ArtworkWYSIWYGEditor
             className="relative bg-background border shadow-lg mx-auto"
             style={{
               width: canvasWidth,
-              minHeight: 800,
+              minHeight: canvasHeight,
             }}
           >
             {loading && (
