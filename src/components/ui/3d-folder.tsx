@@ -81,7 +81,9 @@ export function AnimatedFolder({ title, projects, className }: AnimatedFolderPro
             style={{
               transformOrigin: "bottom center",
               transform: isHovered ? "rotateX(-15deg)" : "rotateX(0deg)",
-              transition: "transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+              transition: isHovered 
+                ? "transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1)"
+                : "transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1) 160ms",
               zIndex: 10,
             }}
           />
@@ -94,7 +96,9 @@ export function AnimatedFolder({ title, projects, className }: AnimatedFolderPro
               left: "calc(50% - 64px + 16px)",
               transformOrigin: "bottom center",
               transform: isHovered ? "rotateX(-25deg) translateY(-2px)" : "rotateX(0deg)",
-              transition: "transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+              transition: isHovered 
+                ? "transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1)"
+                : "transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1) 160ms",
               zIndex: 10,
             }}
           />
@@ -133,7 +137,9 @@ export function AnimatedFolder({ title, projects, className }: AnimatedFolderPro
               top: "calc(50% - 48px + 4px)",
               transformOrigin: "bottom center",
               transform: isHovered ? "rotateX(25deg) translateY(8px)" : "rotateX(0deg)",
-              transition: "transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+              transition: isHovered 
+                ? "transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1)"
+                : "transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1) 160ms",
               zIndex: 30,
             }}
           />
@@ -146,7 +152,9 @@ export function AnimatedFolder({ title, projects, className }: AnimatedFolderPro
               background: "linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%)",
               transformOrigin: "bottom center",
               transform: isHovered ? "rotateX(25deg) translateY(8px)" : "rotateX(0deg)",
-              transition: "transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+              transition: isHovered 
+                ? "transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1)"
+                : "transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1) 160ms",
               zIndex: 31,
             }}
           />
