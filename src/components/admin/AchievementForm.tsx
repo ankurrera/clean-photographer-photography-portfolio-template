@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
@@ -26,7 +25,6 @@ const categories: AchievementCategory[] = [
 
 const AchievementForm = ({ achievement, onSave, onCancel }: AchievementFormProps) => {
   const [title, setTitle] = useState(achievement?.title || '');
-  const [description, setDescription] = useState(achievement?.description || '');
   const [year, setYear] = useState(achievement?.year || null);
   const [category, setCategory] = useState<AchievementCategory>(achievement?.category || 'School');
   const [externalLink, setExternalLink] = useState(achievement?.external_link || '');
@@ -40,7 +38,6 @@ const AchievementForm = ({ achievement, onSave, onCancel }: AchievementFormProps
   useEffect(() => {
     if (achievement) {
       setTitle(achievement.title);
-      setDescription(achievement.description || '');
       setYear(achievement.year || null);
       setCategory(achievement.category);
       setExternalLink(achievement.external_link || '');
@@ -159,7 +156,6 @@ const AchievementForm = ({ achievement, onSave, onCancel }: AchievementFormProps
 
       const achievementData = {
         title: title.trim(),
-        description: description.trim() || null,
         year: year || null,
         category,
         image_url: imageUrl,
