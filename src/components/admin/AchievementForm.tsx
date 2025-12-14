@@ -35,6 +35,9 @@ const AchievementForm = ({ achievement, onSave, onCancel }: AchievementFormProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
+  // Calculate max year once
+  const maxYear = new Date().getFullYear() + 1;
+
   useEffect(() => {
     if (achievement) {
       setTitle(achievement.title);
@@ -237,10 +240,13 @@ const AchievementForm = ({ achievement, onSave, onCancel }: AchievementFormProps
             id="year"
             type="number"
             value={year || ''}
-            onChange={(e) => setYear(e.target.value ? parseInt(e.target.value) : null)}
+            onChange={(e) => {
+              const value = e.target.value ? parseInt(e.target.value, 10) : null;
+              setYear(value && !isNaN(value) ? value : null);
+            }}
             placeholder="e.g., 2024"
             min="1900"
-            max={new Date().getFullYear() + 1}
+            max={maxYear}
           />
           <p className="text-xs text-muted-foreground">
             The year you received this achievement
