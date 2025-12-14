@@ -44,7 +44,7 @@ export interface AchievementData {
  */
 export interface AchievementFormData {
   title: string;
-  description?: string;
+  year?: number;
   category: AchievementCategory;
   image_url: string;
   image_original_url?: string;
