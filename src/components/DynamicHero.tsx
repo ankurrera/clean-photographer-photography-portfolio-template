@@ -64,9 +64,9 @@ const DynamicHero = ({
       } : undefined}
     >
       <div className="space-y-4 text-center">
-        <h2 className="font-playfair text-4xl md:text-5xl text-foreground">
+        <h1 className="font-playfair text-4xl md:text-5xl text-foreground">
           {title}
-        </h2>
+        </h1>
         {subtitle && (
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-inter">
             {subtitle}

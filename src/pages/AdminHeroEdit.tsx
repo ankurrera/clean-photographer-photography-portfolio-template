@@ -29,6 +29,19 @@ import { ArrowLeft, Loader2, Plus, Pencil, Trash2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { HeroText } from '@/hooks/useHeroText';
 
+// Page slug validation pattern
+const PAGE_SLUG_PATTERN = /^[a-z0-9-]+$/;
+
+// Type guard for Supabase errors
+interface SupabaseError {
+  code?: string;
+  message?: string;
+}
+
+const isSupabaseError = (error: unknown): error is SupabaseError => {
+  return typeof error === 'object' && error !== null && 'code' in error;
+};
+
 interface HeroFormData {
   page_slug: string;
   hero_title: string;
@@ -98,7 +111,7 @@ const AdminHeroEdit = () => {
     
     if (!formData.page_slug.trim()) {
       errors.page_slug = 'Page slug is required';
-    } else if (!/^[a-z0-9-]+$/.test(formData.page_slug)) {
+    } else if (!PAGE_SLUG_PATTERN.test(formData.page_slug)) {
       errors.page_slug = 'Page slug must contain only lowercase letters, numbers, and hyphens';
     }
     
@@ -214,8 +227,7 @@ const AdminHeroEdit = () => {
       loadHeroes();
     } catch (err: unknown) {
       console.error('Error saving hero:', err);
-      const error = err as { code?: string; message?: string };
-      if (error.code === '23505') {
+      if (isSupabaseError(err) && err.code === '23505') {
         toast.error('A hero section with this page slug already exists');
       } else {
         toast.error('Failed to save hero section');

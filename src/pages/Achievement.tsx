@@ -86,7 +86,7 @@ const Achievement = () => {
         canonicalUrl="/achievement"
       />
       <PortfolioHeader activeCategory="ACHIEVEMENT" />
-      <main id="main-content" className="min-h-screen pt-8 px-4 md:px-8 pb-16">
+      <main id="main-content" className="min-h-screen pt-24 px-4 md:px-8 pb-16">
         <DynamicHero 
           pageSlug="achievement"
           fallbackTitle="Achievements"
