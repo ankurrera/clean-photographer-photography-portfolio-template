@@ -25,7 +25,9 @@ export const useAboutPage = () => {
           throw fetchError;
         }
 
-        setAboutData(data);
+        if (data) {
+          setAboutData(data);
+        }
       } catch (err) {
         console.error('Error fetching about data:', err);
         setError(err instanceof Error ? err : new Error('Failed to fetch about data'));

@@ -131,7 +131,7 @@ const AdminAboutEdit = () => {
 
   const handleAddService = () => {
     const newService: Service = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       title: '',
       description: ''
     };

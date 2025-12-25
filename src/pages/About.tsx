@@ -201,7 +201,7 @@ const About = () => {
             )}
 
             {/* Services Section */}
-            {!aboutLoading && aboutData?.services && aboutData.services.length > 0 && (
+            {!aboutLoading && aboutData?.services && Array.isArray(aboutData.services) && aboutData.services.length > 0 && (
               <div className="pt-8">
                 <h2 className="font-playfair text-xl text-foreground mb-4">Services</h2>
                 <div className="space-y-4">
@@ -216,7 +216,7 @@ const About = () => {
             )}
 
             {/* Show fallback services if no services in database */}
-            {!aboutLoading && (!aboutData?.services || aboutData.services.length === 0) && (
+            {!aboutLoading && (!aboutData?.services || !Array.isArray(aboutData.services) || aboutData.services.length === 0) && (
               <div className="pt-8">
                 <h2 className="font-playfair text-xl text-foreground mb-4">Services</h2>
                 <p className="text-foreground/70 text-xs uppercase tracking-wider leading-loose">
