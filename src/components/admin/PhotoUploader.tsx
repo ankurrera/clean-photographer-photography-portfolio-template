@@ -5,10 +5,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { formatSupabaseError } from '@/lib/utils';
 import { toast } from 'sonner';
 import PhotoMetadataForm, { PhotoMetadata } from './PhotoMetadataForm';
-import { PhotoCategory } from '@/types/wysiwyg';
 
 interface PhotoUploaderProps {
-  category: PhotoCategory;
   onUploadComplete: () => void;
 }
 
@@ -17,7 +15,7 @@ interface PendingFile {
   previewUrl: string;
 }
 
-export default function PhotoUploader({ category, onUploadComplete }: PhotoUploaderProps) {
+export default function PhotoUploader({ onUploadComplete }: PhotoUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string[]>([]);
@@ -86,7 +84,7 @@ export default function PhotoUploader({ category, onUploadComplete }: PhotoUploa
           .replace(/[^a-zA-Z0-9]/g, '-')
           .replace(/-+/g, '-')
           .replace(/^-|-$/g, '');
-        const fileName = `${category}/${Date.now()}-${sanitizedName || 'video'}.mp4`;
+        const fileName = `photoshoots/${Date.now()}-${sanitizedName || 'video'}.mp4`;
         
         const { error: uploadError } = await supabase.storage
           .from('photos')
@@ -108,7 +106,7 @@ export default function PhotoUploader({ category, onUploadComplete }: PhotoUploa
         if (videoThumbnail) {
           const thumbDimensions = await getImageDimensions(videoThumbnail);
           const compressedThumbnail = await generateDerivative(videoThumbnail, thumbDimensions.width, thumbDimensions.height);
-          const thumbnailFileName = `${category}/${Date.now()}-${sanitizedName || 'video'}-thumbnail.webp`;
+          const thumbnailFileName = `photoshoots/${Date.now()}-${sanitizedName || 'video'}-thumbnail.webp`;
           
           const { error: thumbError } = await supabase.storage
             .from('photos')
@@ -138,7 +136,7 @@ export default function PhotoUploader({ category, onUploadComplete }: PhotoUploa
         
         // Upload ORIGINAL file byte-for-byte (no compression)
         const originalExt = file.name.split('.').pop() || 'jpg';
-        const originalFileName = `${category}/originals/${Date.now()}-${sanitizedName || 'photo'}.${originalExt}`;
+        const originalFileName = `photoshoots/originals/${Date.now()}-${sanitizedName || 'photo'}.${originalExt}`;
         
         const { error: origUploadError } = await supabase.storage
           .from('photos')
@@ -157,7 +155,7 @@ export default function PhotoUploader({ category, onUploadComplete }: PhotoUploa
 
         // Generate and upload web-optimized derivative
         const derivativeBlob = await generateDerivative(file, originalWidth, originalHeight);
-        const derivativeFileName = `${category}/derivatives/${Date.now()}-${sanitizedName || 'photo'}.webp`;
+        const derivativeFileName = `photoshoots/derivatives/${Date.now()}-${sanitizedName || 'photo'}.webp`;
         
         const { error: derivUploadError } = await supabase.storage
           .from('photos')
@@ -179,7 +177,6 @@ export default function PhotoUploader({ category, onUploadComplete }: PhotoUploa
       const { data: maxOrderData } = await supabase
         .from('photos')
         .select('display_order, z_index')
-        .eq('category', category)
         .order('display_order', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -213,7 +210,6 @@ export default function PhotoUploader({ category, onUploadComplete }: PhotoUploa
       const { error: insertError } = await supabase
         .from('photos')
         .insert({
-          category,
           image_url: derivativeUrl,
           display_order: nextOrder,
           title: file.name.replace(/\.[^/.]+$/, ''),
@@ -253,7 +249,7 @@ export default function PhotoUploader({ category, onUploadComplete }: PhotoUploa
       console.error('Upload error:', errorMessage);
       throw new Error(errorMessage);
     }
-  }, [category, generateDerivative, getImageDimensions, metadata, videoThumbnail]);
+  }, [generateDerivative, getImageDimensions, metadata, videoThumbnail]);
 
   // Handle file selection (preview only, no upload yet)
   const handleFiles = useCallback((files: FileList) => {

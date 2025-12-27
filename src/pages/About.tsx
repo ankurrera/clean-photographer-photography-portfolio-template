@@ -127,11 +127,10 @@ const About = () => {
           return;
         }
 
-        // Fallback: Fetch a portrait from Supabase uploads - try 'personal' category
+        // Fallback: Fetch a portrait from Supabase uploads
         const { data, error: fetchError } = await supabase
           .from('photos')
           .select('*')
-          .eq('category', 'personal')
           .eq('is_draft', false)
           .order('display_order', { ascending: true })
           .limit(1);
