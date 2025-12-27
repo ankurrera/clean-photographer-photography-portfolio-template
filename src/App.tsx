@@ -10,8 +10,6 @@ import About from "./pages/About";
 import Technical from "./pages/Technical";
 import Artistic from "./pages/Artistic";
 import Achievement from "./pages/Achievement";
-import CategoryGallery from "./pages/CategoryGallery";
-import CategoryRedirect from "./pages/CategoryRedirect";
 import Photoshoots from "./pages/Photoshoots";
 import Admin from "./pages/Admin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -43,13 +41,9 @@ const App = () => (
                 <Route path="/achievement" element={<Achievement />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/photoshoots" element={<Photoshoots />} />
-                <Route path="/photoshoots" element={<Photoshoots />} />
-                <Route path="/photoshoots/:category" element={<CategoryGallery />} />
-                {/* Redirect old category routes to new photoshoots routes */}
-                <Route path="/category/:category" element={<CategoryRedirect />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/photoshoots/:category/edit" element={<AdminPhotoshootsEdit />} />
+                <Route path="/admin/photoshoots/edit" element={<AdminPhotoshootsEdit />} />
                 <Route path="/admin/artistic/edit" element={<AdminArtisticEdit />} />
                 <Route path="/admin/technical/edit" element={<AdminTechnicalEdit />} />
                 <Route path="/admin/achievement/edit" element={<AdminAchievementEdit />} />

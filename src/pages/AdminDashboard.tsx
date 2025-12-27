@@ -46,29 +46,6 @@ const AdminDashboard = () => {
     return null;
   }
 
-  const photoshootCategories = [
-    {
-      category: 'selected',
-      title: 'Selected Works',
-      description: 'Curated selection of luxury fashion campaigns and editorial work',
-    },
-    {
-      category: 'commissioned',
-      title: 'Commissioned Projects',
-      description: 'Commercial fashion campaigns for luxury brands',
-    },
-    {
-      category: 'editorial',
-      title: 'Editorial Photography',
-      description: 'Editorial fashion photography for leading publications',
-    },
-    {
-      category: 'personal',
-      title: 'Personal Projects',
-      description: 'Artistic personal projects and creative experimentation',
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -121,29 +98,24 @@ const AdminDashboard = () => {
             <h2 className="text-lg font-semibold uppercase tracking-wider">Photoshoots</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {photoshootCategories.map((item) => (
-              <Card 
-                key={item.category} 
-                className="hover:border-foreground/20 transition-all duration-300 cursor-pointer"
-                onClick={() => navigate(`/admin/photoshoots/${item.category}/edit`)}
-              >
-                <CardHeader>
-                  <CardTitle className="text-base uppercase tracking-wider">
-                    {item.title}
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    {item.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button variant="outline" size="sm" className="w-full">
-                    Edit Photos
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Card 
+            className="hover:border-foreground/20 transition-all duration-300 cursor-pointer max-w-md"
+            onClick={() => navigate('/admin/photoshoots/edit')}
+          >
+            <CardHeader>
+              <CardTitle className="text-base uppercase tracking-wider">
+                Photoshoot Management
+              </CardTitle>
+              <CardDescription className="text-sm">
+                Manage all photoshoots in one unified location. Upload photos and assign category tags: selected, commissioned, editorial, or personal.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" size="sm" className="w-full">
+                Manage Photoshoots
+              </Button>
+            </CardContent>
+          </Card>
         </section>
 
         {/* Technical Projects Section */}

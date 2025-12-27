@@ -86,7 +86,7 @@ const Achievement = () => {
         canonicalUrl="/achievement"
       />
       <PortfolioHeader activeCategory="ACHIEVEMENT" />
-      <main id="main-content" className="min-h-screen pt-24 px-4 md:px-8 pb-16">
+      <main id="main-content" className="flex-1">
         <DynamicHero 
           pageSlug="achievement"
           fallbackTitle="Achievements"
@@ -94,7 +94,7 @@ const Achievement = () => {
           fallbackDescription="Explore achievements across different categories. Hover over each folder to preview certificates."
         />
         
-        <div className="max-w-[1400px] mx-auto">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-16">
           {loading && (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />

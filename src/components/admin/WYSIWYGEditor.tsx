@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { PhotoLayoutData, EditorMode, DevicePreview, HistoryEntry, PhotoCategory } from '@/types/wysiwyg';
@@ -19,15 +19,13 @@ import {
 } from '@/components/ui/dialog';
 
 interface WYSIWYGEditorProps {
-  category: PhotoCategory;
-  onCategoryChange: (category: PhotoCategory) => void;
   onSignOut: () => void;
 }
 
 // Desktop canvas baseline width for device preview scaling
 const DESKTOP_CANVAS_WIDTH = 1600;
 
-export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }: WYSIWYGEditorProps) {
+export default function WYSIWYGEditor({ onSignOut }: WYSIWYGEditorProps) {
   const [photos, setPhotos] = useState<PhotoLayoutData[]>([]);
   const [mode, setMode] = useState<EditorMode>('edit');
   const [devicePreview, setDevicePreview] = useState<DevicePreview>('desktop');
@@ -38,6 +36,8 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
   const [showHistory, setShowHistory] = useState(false);
   const [selectedPhotoId, setSelectedPhotoId] = useState<string | null>(null);
   const [editingPhotoId, setEditingPhotoId] = useState<string | null>(null);
+  const [filterCategory, setFilterCategory] = useState<PhotoCategory | 'all'>('all');
+  const [uploadCategory, setUploadCategory] = useState<PhotoCategory>('selected');
   
   // History management
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -50,7 +50,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
   const refreshTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const fetchPhotos = async (isRefresh = false) => {
+  const fetchPhotos = useCallback(async (isRefresh = false) => {
     // Cancel any in-flight requests
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -82,10 +82,10 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
     }, 10000);
     
     try {
+      // Fetch all photos, not filtered by category
       const { data, error } = await supabase
         .from('photos')
         .select('*')
-        .eq('category', category)
         .order('z_index', { ascending: true })
         .abortSignal(abortControllerRef.current.signal);
 
@@ -131,12 +131,12 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
       setIsRefreshing(false);
       abortControllerRef.current = null;
     }
-  };
+  }, [historyInitialized]);
 
   useEffect(() => {
     fetchPhotos();
     
-    // Cleanup function to abort in-flight requests when component unmounts or category changes
+    // Cleanup function to abort in-flight requests when component unmounts
     return () => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -145,7 +145,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
         clearTimeout(refreshTimeoutRef.current);
       }
     };
-  }, [category]);
+  }, [fetchPhotos]);
 
   // Handle device preview changes to ensure layout recalculation
   useEffect(() => {
@@ -411,7 +411,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
     if (isRefreshing) return;
     
     fetchPhotos(true);
-  }, [isRefreshing, category]);
+  }, [isRefreshing, fetchPhotos]);
 
   const handleUploadComplete = () => {
     setShowUploader(false);
@@ -474,12 +474,28 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
     }
   }, [devicePreview]);
 
-  const categoryUpper = category.toUpperCase();
   const canvasHeight = calculateCanvasHeight();
   const scaleFactor = getDeviceScaleFactor();
   
+  // Filter photos based on selected category filter (memoized for performance)
+  const filteredPhotos = useMemo(() => 
+    filterCategory === 'all' 
+      ? photos 
+      : photos.filter(p => p.category === filterCategory),
+    [photos, filterCategory]
+  );
+  
   // Find the photo being edited for the edit panel
   const editingPhoto = editingPhotoId ? photos.find(p => p.id === editingPhotoId) : null;
+  
+  // Handler for filter category change - also updates upload category
+  const handleFilterCategoryChange = useCallback((category: PhotoCategory | 'all') => {
+    setFilterCategory(category);
+    // When filtering by a specific category, also set it as the upload category
+    if (category !== 'all') {
+      setUploadCategory(category);
+    }
+  }, []);
 
   return (
     <>
@@ -490,7 +506,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
         canUndo={historyIndex > 0}
         canRedo={historyIndex < history.length - 1}
         hasChanges={hasUnsavedChanges}
-        category={category}
+        filterCategory={filterCategory}
         isRefreshing={isRefreshing}
         onModeChange={setMode}
         onDevicePreviewChange={setDevicePreview}
@@ -502,7 +518,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
         onShowHistory={() => setShowHistory(true)}
         onAddPhoto={() => setShowUploader(true)}
         onRefresh={handleRefresh}
-        onCategoryChange={onCategoryChange}
+        onFilterCategoryChange={handleFilterCategoryChange}
         onSignOut={onSignOut}
       />
 
@@ -534,7 +550,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
             {/* Device Inner - constrained content area */}
             <div className="device-inner flex-1 flex flex-col relative">
               {/* Exact replica of public view */}
-              <PortfolioHeader activeCategory={categoryUpper} isAdminContext={true} topOffset="56px" />
+              <PortfolioHeader activeCategory="PHOTOSHOOTS" isAdminContext={true} topOffset="56px" />
               
               <main className="flex-1 flex flex-col">
                 <PhotographerBio />
@@ -585,7 +601,7 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
                         </p>
                       </div>
                     ) : (
-                      photos.map((photo) => (
+                      filteredPhotos.map((photo) => (
                         <DraggablePhoto
                           key={photo.id}
                           photo={photo}
@@ -622,11 +638,11 @@ export default function WYSIWYGEditor({ category, onCategoryChange, onSignOut }:
           <DialogHeader>
             <DialogTitle>Add Photos</DialogTitle>
             <DialogDescription>
-              Upload photos to add to your {category} portfolio
+              Upload photos and assign to category: {uploadCategory}
             </DialogDescription>
           </DialogHeader>
           <PhotoUploader 
-            category={category}
+            category={uploadCategory}
             onUploadComplete={handleUploadComplete}
           />
         </DialogContent>
