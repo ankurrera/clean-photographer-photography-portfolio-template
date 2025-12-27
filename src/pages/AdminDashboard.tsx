@@ -125,7 +125,7 @@ const AdminDashboard = () => {
             <h2 className="text-lg font-semibold uppercase tracking-wider">Technical Projects</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl">
             <Card 
               className="hover:border-foreground/20 transition-all duration-300 cursor-pointer"
               onClick={() => navigate('/admin/technical/edit')}
@@ -160,6 +160,25 @@ const AdminDashboard = () => {
               <CardContent>
                 <Button variant="outline" size="sm" className="w-full">
                   Manage Skills
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card 
+              className="hover:border-foreground/20 transition-all duration-300 cursor-pointer"
+              onClick={() => navigate('/admin/technical/experience/edit')}
+            >
+              <CardHeader>
+                <CardTitle className="text-base uppercase tracking-wider">
+                  Experience Manager
+                </CardTitle>
+                <CardDescription className="text-sm">
+                  Manage professional experience entries with role, company, and dates
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" size="sm" className="w-full">
+                  Manage Experience
                 </Button>
               </CardContent>
             </Card>
