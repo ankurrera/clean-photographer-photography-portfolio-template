@@ -111,13 +111,13 @@ const Achievement = () => {
           )}
 
           {!loading && !error && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 items-start justify-items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10 lg:gap-12 items-start justify-items-center">
               {achievementFolders.map((folder) => (
                 <AnimatedFolder 
                   key={folder.title} 
                   title={folder.title} 
                   projects={folder.projects}
-                  className="w-full max-w-[320px]"
+                  className="w-full max-w-[300px]"
                 />
               ))}
             </div>

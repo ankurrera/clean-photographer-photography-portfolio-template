@@ -7,7 +7,6 @@ import DevErrorBanner from "@/components/DevErrorBanner";
 import LayoutGallery from "@/components/LayoutGallery";
 import Lightbox from "@/components/Lightbox";
 import SEO from "@/components/SEO";
-import Breadcrumbs from "@/components/Breadcrumbs";
 import { supabase } from "@/integrations/supabase/client";
 import { GalleryImage, DEFAULT_PHOTO_WIDTH, DEFAULT_PHOTO_HEIGHT } from "@/types/gallery";
 
@@ -146,14 +145,6 @@ const Photoshoots = () => {
           fallbackTitle="Ankur Bag"
           fallbackSubtitle="FASHION PRODUCTION & PHOTOGRAPHY"
           fallbackDescription="Production photographer specializing in fashion, editorial, and commercial work. Creating compelling imagery for global brands and publications."
-        />
-        
-        {/* Breadcrumbs */}
-        <Breadcrumbs
-          items={[
-            { label: 'Home', href: '/' },
-            { label: 'Photoshoots' }
-          ]}
         />
 
         {error && (
