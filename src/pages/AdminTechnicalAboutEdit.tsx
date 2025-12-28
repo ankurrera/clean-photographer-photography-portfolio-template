@@ -33,67 +33,67 @@ const AdminTechnicalAboutEdit = () => {
   useEffect(() => {
     if (!user || !isAdmin) return;
     
+    const createDefaultAboutData = async () => {
+      try {
+        const defaultData = {
+          section_label: 'About',
+          heading: 'Who Am I?',
+          content_blocks: [
+            "I'm a passionate full-stack Web developer with over 1 years of experience creating digital solutions that matter.",
+            "My journey began with a curiosity about how things work. Today, I specialize in building scalable web applications, integrating AI capabilities, and crafting user experiences that feel natural and intuitive.",
+            "When I'm not coding, you'll find me exploring new technologies, contributing to open source projects, or sharing knowledge with the developer community."
+          ],
+          stats: [
+            { value: "10+", label: "Projects Delivered" },
+            { value: "9+", label: "Happy Clients" }
+          ]
+        };
+
+        const { data, error } = await supabase
+          .from('technical_about')
+          .insert(defaultData)
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        setAboutData(data as TechnicalAbout);
+        toast.success('Default about section created');
+      } catch (error) {
+        console.error('Error creating default about data:', error);
+        toast.error('Failed to create default about section');
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    const loadAboutData = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('technical_about')
+          .select('*')
+          .single();
+
+        if (error) {
+          // If no data exists, create default entry
+          if (error.code === 'PGRST116') {
+            await createDefaultAboutData();
+            return;
+          }
+          throw error;
+        }
+
+        setAboutData(data as TechnicalAbout);
+      } catch (error) {
+        console.error('Error loading about data:', error);
+        toast.error('Failed to load about section data');
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
     loadAboutData();
   }, [user, isAdmin]);
-
-  const loadAboutData = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('technical_about')
-        .select('*')
-        .single();
-
-      if (error) {
-        // If no data exists, create default entry
-        if (error.code === 'PGRST116') {
-          await createDefaultAboutData();
-          return;
-        }
-        throw error;
-      }
-
-      setAboutData(data as TechnicalAbout);
-    } catch (error) {
-      console.error('Error loading about data:', error);
-      toast.error('Failed to load about section data');
-    } finally {
-      setIsLoadingData(false);
-    }
-  };
-
-  const createDefaultAboutData = async () => {
-    try {
-      const defaultData = {
-        section_label: 'About',
-        heading: 'Who Am I?',
-        content_blocks: [
-          "I'm a passionate full-stack Web developer with over 1 years of experience creating digital solutions that matter.",
-          "My journey began with a curiosity about how things work. Today, I specialize in building scalable web applications, integrating AI capabilities, and crafting user experiences that feel natural and intuitive.",
-          "When I'm not coding, you'll find me exploring new technologies, contributing to open source projects, or sharing knowledge with the developer community."
-        ],
-        stats: [
-          { value: "10+", label: "Projects Delivered" },
-          { value: "9+", label: "Happy Clients" }
-        ]
-      };
-
-      const { data, error } = await supabase
-        .from('technical_about')
-        .insert(defaultData)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setAboutData(data as TechnicalAbout);
-      toast.success('Default about section created');
-    } catch (error) {
-      console.error('Error creating default about data:', error);
-      toast.error('Failed to create default about section');
-    } finally {
-      setIsLoadingData(false);
-    }
-  };
 
   const handleSave = async (data: Partial<TechnicalAbout>) => {
     try {
