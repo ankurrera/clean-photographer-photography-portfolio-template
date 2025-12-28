@@ -33,9 +33,11 @@ const AllTechnicalProjects = () => {
       const parsedProjects = data.map(project => {
         let languages: string[] = [];
         try {
-          languages = Array.isArray(project.languages) 
-            ? project.languages 
-            : JSON.parse(project.languages as string);
+          if (Array.isArray(project.languages)) {
+            languages = project.languages;
+          } else if (project.languages && typeof project.languages === 'string') {
+            languages = JSON.parse(project.languages);
+          }
         } catch (error) {
           console.error('Error parsing languages for project:', project.id, error);
           languages = [];
@@ -146,7 +148,7 @@ const AllTechnicalProjects = () => {
                         />
 
                         <div className="flex-1 min-w-0">
-                          {/* Project rank and title */}
+                          {/* Project rank and title - using index for visual numbering since projects are already sorted by display_order */}
                           <div className="flex items-center gap-3 mb-2">
                             <span className="text-xs font-mono text-muted-foreground/60 tabular-nums">
                               {String(index + 1).padStart(2, '0')}
