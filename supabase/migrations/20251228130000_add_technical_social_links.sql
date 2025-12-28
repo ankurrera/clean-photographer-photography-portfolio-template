@@ -17,9 +17,12 @@ ADD CONSTRAINT social_links_page_context_check
   CHECK (page_context IN ('about', 'technical'));
 
 -- Step 4: Update unique constraint to include page_context
+-- First, drop the old constraint
 ALTER TABLE public.social_links 
 DROP CONSTRAINT IF EXISTS social_links_link_type_key;
 
+-- Add new unique constraint that includes page_context
+-- This allows the same link_type to exist for different page contexts
 ALTER TABLE public.social_links 
 ADD CONSTRAINT social_links_page_context_link_type_unique 
   UNIQUE(page_context, link_type);

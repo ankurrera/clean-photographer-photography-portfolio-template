@@ -86,24 +86,24 @@ const AdminTechnicalSocialLinksEdit = () => {
 
     setIsSaving(true);
     try {
-      const updates = socialLinks.map(link => ({
-        id: link.id,
-        url: link.url,
-        is_visible: link.is_visible,
-        display_order: link.display_order
-      }));
-
-      for (const update of updates) {
-        const { error } = await supabase
+      // Use Promise.all for parallel updates to improve performance
+      const updatePromises = socialLinks.map(link => 
+        supabase
           .from('social_links')
           .update({
-            url: update.url,
-            is_visible: update.is_visible,
-            display_order: update.display_order
+            url: link.url,
+            is_visible: link.is_visible,
+            display_order: link.display_order
           })
-          .eq('id', update.id);
+          .eq('id', link.id)
+      );
 
-        if (error) throw error;
+      const results = await Promise.all(updatePromises);
+      
+      // Check if any update failed
+      const failedUpdate = results.find(result => result.error);
+      if (failedUpdate?.error) {
+        throw failedUpdate.error;
       }
 
       toast.success('Social links updated successfully');
