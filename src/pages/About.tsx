@@ -83,7 +83,7 @@ const About = () => {
       const result = await parseApiResponse(response);
 
       if (!response.ok) {
-        throw new Error(result.details as string || result.error as string || 'Failed to send message');
+        throw new Error(String(result.details || result.error || 'Failed to send message'));
       }
 
       toast({

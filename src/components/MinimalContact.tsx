@@ -96,7 +96,7 @@ const MinimalContact = () => {
       const data = await parseApiResponse(response);
 
       if (!response.ok) {
-        throw new Error(data.details as string || data.error as string || 'Failed to send message');
+        throw new Error(String(data.details || data.error || 'Failed to send message'));
       }
 
       toast({
