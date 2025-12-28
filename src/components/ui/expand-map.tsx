@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useId } from "react"
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 interface LocationMapProps {
   location?: string
@@ -52,7 +53,7 @@ export function LocationMap({
   return (
     <motion.div
       ref={containerRef}
-      className={`relative cursor-pointer select-none ${className || ''}`}
+      className={cn("relative cursor-pointer select-none", className)}
       style={{
         perspective: 1000,
       }}
