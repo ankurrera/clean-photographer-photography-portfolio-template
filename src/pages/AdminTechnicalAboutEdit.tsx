@@ -39,7 +39,7 @@ const AdminTechnicalAboutEdit = () => {
           section_label: 'About',
           heading: 'Who Am I?',
           content_blocks: [
-            "I'm a passionate full-stack Web developer with over 1 years of experience creating digital solutions that matter.",
+            "I'm a passionate full-stack Web developer with over 1 year of experience creating digital solutions that matter.",
             "My journey began with a curiosity about how things work. Today, I specialize in building scalable web applications, integrating AI capabilities, and crafting user experiences that feel natural and intuitive.",
             "When I'm not coding, you'll find me exploring new technologies, contributing to open source projects, or sharing knowledge with the developer community."
           ],
