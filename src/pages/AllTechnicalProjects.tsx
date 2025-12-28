@@ -10,6 +10,23 @@ import PortfolioHeader from '@/components/PortfolioHeader';
 import PortfolioFooter from '@/components/PortfolioFooter';
 import PageLayout from '@/components/PageLayout';
 
+// Helper function to get status badge color
+const getStatusBadgeColor = (status: string | null): string => {
+  const statusLower = status?.toLowerCase();
+  switch (statusLower) {
+    case 'live':
+      return 'bg-success';
+    case 'in development':
+      return 'bg-warning';
+    case 'testing':
+      return 'bg-blue-500';
+    case 'paused':
+      return 'bg-destructive';
+    default:
+      return 'bg-muted-foreground';
+  }
+};
+
 const AllTechnicalProjects = () => {
   const [projects, setProjects] = useState<TechnicalProject[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -200,17 +217,7 @@ const AllTechnicalProjects = () => {
                               {/* Status and Year */}
                               <div className="flex gap-2">
                                 <span className="inline-flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground border border-border rounded-full px-2 py-0.5">
-                                  <span className={`w-1 h-1 rounded-full ${
-                                    project.status?.toLowerCase() === 'live' 
-                                      ? 'bg-success' 
-                                      : project.status?.toLowerCase() === 'in development' 
-                                      ? 'bg-warning'
-                                      : project.status?.toLowerCase() === 'testing'
-                                      ? 'bg-blue-500'
-                                      : project.status?.toLowerCase() === 'paused'
-                                      ? 'bg-destructive'
-                                      : 'bg-muted-foreground'
-                                  }`} />
+                                  <span className={`w-1 h-1 rounded-full ${getStatusBadgeColor(project.status)}`} />
                                   {project.status || 'Live'}
                                 </span>
                                 <span className="inline-flex items-center gap-2 text-[10px] font-mono text-muted-foreground border border-border rounded-full px-2 py-0.5">

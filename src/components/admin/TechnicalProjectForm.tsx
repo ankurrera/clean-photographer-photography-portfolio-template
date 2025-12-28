@@ -16,18 +16,20 @@ interface TechnicalProjectFormProps {
   onCancel: () => void;
 }
 
+// Helper function to get initial progress value
+const getInitialProgress = (project?: TechnicalProject | null): number => {
+  if (project?.progress !== null && project?.progress !== undefined) {
+    return project.progress;
+  }
+  return project?.status === 'Live' ? 100 : 0;
+};
+
 const TechnicalProjectForm = ({ project, onSave, onCancel }: TechnicalProjectFormProps) => {
   const [title, setTitle] = useState(project?.title || '');
   const [description, setDescription] = useState(project?.description || '');
   const [devYear, setDevYear] = useState(project?.dev_year || new Date().getFullYear().toString());
   const [status, setStatus] = useState(project?.status || 'Live');
-  const [progress, setProgress] = useState<number>(
-    project?.progress !== null && project?.progress !== undefined 
-      ? project.progress 
-      : project?.status === 'Live' 
-        ? 100 
-        : 0
-  );
+  const [progress, setProgress] = useState<number>(getInitialProgress(project));
   const [githubLink, setGithubLink] = useState(project?.github_link || '');
   const [liveLink, setLiveLink] = useState(project?.live_link || '');
   const [thumbnailUrl, setThumbnailUrl] = useState(project?.thumbnail_url || '');
@@ -42,6 +44,12 @@ const TechnicalProjectForm = ({ project, onSave, onCancel }: TechnicalProjectFor
       setProgress(100);
     }
   }, [status]);
+
+  // Helper function to handle progress input changes
+  const handleProgressChange = (value: string) => {
+    const numValue = parseInt(value) || 0;
+    setProgress(Math.min(100, Math.max(0, numValue)));
+  };
 
   const handleAddLanguage = () => {
     if (newLanguage.trim() && !languages.includes(newLanguage.trim())) {
@@ -253,7 +261,7 @@ const TechnicalProjectForm = ({ project, onSave, onCancel }: TechnicalProjectFor
               min="0"
               max="100"
               value={progress}
-              onChange={(e) => setProgress(Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))}
+              onChange={(e) => handleProgressChange(e.target.value)}
               placeholder="0-100"
               disabled={status === 'Live'}
             />
