@@ -30,12 +30,21 @@ const AllTechnicalProjects = () => {
       if (error) throw error;
 
       // Parse languages from JSONB
-      const parsedProjects = data.map(project => ({
-        ...project,
-        languages: Array.isArray(project.languages) 
-          ? project.languages 
-          : JSON.parse(project.languages as string)
-      })) as TechnicalProject[];
+      const parsedProjects = data.map(project => {
+        let languages: string[] = [];
+        try {
+          languages = Array.isArray(project.languages) 
+            ? project.languages 
+            : JSON.parse(project.languages as string);
+        } catch (error) {
+          console.error('Error parsing languages for project:', project.id, error);
+          languages = [];
+        }
+        return {
+          ...project,
+          languages
+        };
+      }) as TechnicalProject[];
 
       setProjects(parsedProjects);
     } catch (error) {
