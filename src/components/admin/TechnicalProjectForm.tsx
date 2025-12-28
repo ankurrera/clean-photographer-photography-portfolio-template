@@ -18,7 +18,7 @@ interface TechnicalProjectFormProps {
 
 // Helper function to get initial progress value
 const getInitialProgress = (project?: TechnicalProject | null): number => {
-  if (project?.progress !== null && project?.progress !== undefined) {
+  if (project?.progress != null) {
     return project.progress;
   }
   return project?.status === 'Live' ? 100 : 0;
@@ -47,7 +47,7 @@ const TechnicalProjectForm = ({ project, onSave, onCancel }: TechnicalProjectFor
 
   // Helper function to handle progress input changes
   const handleProgressChange = (value: string) => {
-    const numValue = parseInt(value) || 0;
+    const numValue = parseInt(value, 10) || 0;
     setProgress(Math.min(100, Math.max(0, numValue)));
   };
 

@@ -3,6 +3,7 @@ import { TechnicalProject } from '@/types/technical';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2, GripVertical, Github, ExternalLink } from 'lucide-react';
+import { getStatusTextColor } from '@/lib/projectUtils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -139,15 +140,11 @@ const TechnicalProjectList = ({ projects, onEdit, onDelete, onReorder }: Technic
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                     <span>{project.dev_year}</span>
                     {project.status && (
-                      <span className={`font-mono uppercase tracking-widest ${
-                        project.status === 'Live' ? 'text-success' : 
-                        project.status === 'Paused' ? 'text-destructive' : 
-                        'text-warning'
-                      }`}>
+                      <span className={`font-mono uppercase tracking-widest ${getStatusTextColor(project.status)}`}>
                         {project.status}
                       </span>
                     )}
-                    {project.progress !== null && project.progress !== undefined && (
+                    {project.progress != null && (
                       <span className="font-mono">
                         Progress: {project.progress}%
                       </span>

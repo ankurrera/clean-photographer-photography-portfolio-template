@@ -5,27 +5,11 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { TechnicalProject } from '@/types/technical';
 import { cn } from '@/lib/utils';
+import { getStatusBadgeColor } from '@/lib/projectUtils';
 import { useNavigate } from 'react-router-dom';
 import PortfolioHeader from '@/components/PortfolioHeader';
 import PortfolioFooter from '@/components/PortfolioFooter';
 import PageLayout from '@/components/PageLayout';
-
-// Helper function to get status badge color
-const getStatusBadgeColor = (status: string | null): string => {
-  const statusLower = status?.toLowerCase();
-  switch (statusLower) {
-    case 'live':
-      return 'bg-success';
-    case 'in development':
-      return 'bg-warning';
-    case 'testing':
-      return 'bg-blue-500';
-    case 'paused':
-      return 'bg-destructive';
-    default:
-      return 'bg-muted-foreground';
-  }
-};
 
 const AllTechnicalProjects = () => {
   const [projects, setProjects] = useState<TechnicalProject[]>([]);
