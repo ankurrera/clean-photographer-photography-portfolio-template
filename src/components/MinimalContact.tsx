@@ -9,7 +9,6 @@ import { useState, useEffect } from 'react';
 import TechnicalSocialLinks from '@/components/TechnicalSocialLinks';
 import { LocationMap } from '@/components/ui/expand-map';
 import { supabase } from '@/integrations/supabase/client';
-import { TechnicalAbout } from '@/types/technicalAbout';
 
 const MinimalContact = () => {
   const [formData, setFormData] = useState({
@@ -30,7 +29,12 @@ const MinimalContact = () => {
         .select('location, coordinates')
         .single();
 
-      if (data && !error) {
+      if (error) {
+        console.error('Error fetching location data:', error);
+        return;
+      }
+
+      if (data) {
         setLocationData({
           location: data.location || 'Kolkata, WB',
           coordinates: data.coordinates || '22.5726° N, 88.3639° E'
