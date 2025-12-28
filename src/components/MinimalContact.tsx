@@ -92,7 +92,15 @@ const MinimalContact = () => {
         }),
       });
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        // If response is not JSON, get it as text
+        const text = await response.text();
+        data = { error: text || 'Server returned non-JSON response' };
+      }
 
       if (!response.ok) {
         throw new Error(data.details || data.error || 'Failed to send message');

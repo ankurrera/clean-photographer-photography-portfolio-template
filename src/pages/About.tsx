@@ -79,7 +79,15 @@ const About = () => {
         }),
       });
 
-      const result = await response.json();
+      let result;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        // If response is not JSON, get it as text
+        const text = await response.text();
+        result = { error: text || 'Server returned non-JSON response' };
+      }
 
       if (!response.ok) {
         throw new Error(result.details || result.error || 'Failed to send message');
