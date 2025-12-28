@@ -21,7 +21,13 @@ const TechnicalProjectForm = ({ project, onSave, onCancel }: TechnicalProjectFor
   const [description, setDescription] = useState(project?.description || '');
   const [devYear, setDevYear] = useState(project?.dev_year || new Date().getFullYear().toString());
   const [status, setStatus] = useState(project?.status || 'Live');
-  const [progress, setProgress] = useState<number>(project?.progress || 0);
+  const [progress, setProgress] = useState<number>(
+    project?.progress !== null && project?.progress !== undefined 
+      ? project.progress 
+      : project?.status === 'Live' 
+        ? 100 
+        : 0
+  );
   const [githubLink, setGithubLink] = useState(project?.github_link || '');
   const [liveLink, setLiveLink] = useState(project?.live_link || '');
   const [thumbnailUrl, setThumbnailUrl] = useState(project?.thumbnail_url || '');
