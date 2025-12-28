@@ -140,9 +140,16 @@ const TechnicalProjectList = ({ projects, onEdit, onDelete, onReorder }: Technic
                     <span>{project.dev_year}</span>
                     {project.status && (
                       <span className={`font-mono uppercase tracking-widest ${
-                        project.status === 'Live' ? 'text-success' : 'text-warning'
+                        project.status === 'Live' ? 'text-success' : 
+                        project.status === 'Paused' ? 'text-destructive' : 
+                        'text-warning'
                       }`}>
                         {project.status}
+                      </span>
+                    )}
+                    {project.progress !== null && project.progress !== undefined && (
+                      <span className="font-mono">
+                        Progress: {project.progress}%
                       </span>
                     )}
                     {project.github_link && (
