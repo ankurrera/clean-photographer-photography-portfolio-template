@@ -42,7 +42,7 @@ export default async function handler(
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
 
   // Handle OPTIONS request for CORS preflight
   if (req.method === 'OPTIONS') {
@@ -206,12 +206,17 @@ ${sanitizedMessage}
     };
 
     // Send email with timeout handling
+    let timeoutId: NodeJS.Timeout;
     const sendMailPromise = transporter.sendMail(mailOptions);
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Email sending timeout')), 15000)
-    );
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error('Email sending timeout')), 15000);
+    });
     
-    await Promise.race([sendMailPromise, timeoutPromise]);
+    try {
+      await Promise.race([sendMailPromise, timeoutPromise]);
+    } finally {
+      clearTimeout(timeoutId!);
+    }
 
     // Log success (without sensitive data)
     console.log(`Email sent successfully from ${source} page at ${new Date().toISOString()}`);
