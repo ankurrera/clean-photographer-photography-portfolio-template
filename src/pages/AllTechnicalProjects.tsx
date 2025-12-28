@@ -132,141 +132,150 @@ const AllTechnicalProjects = () => {
                   >
                     <div
                       className={cn(
-                        "relative flex flex-col md:flex-row md:items-center justify-between py-6 px-6 -mx-4 cursor-pointer",
+                        "relative py-6 px-6 -mx-4 cursor-pointer",
                         "transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
                         "rounded-lg",
                         hoveredIndex === index ? "bg-foreground/[0.03] dark:bg-foreground/[0.05]" : "bg-transparent",
                       )}
                     >
-                      {/* Left side - project info */}
-                      <div className="relative flex items-start gap-4 flex-1">
-                        <div
-                          className={cn(
-                            "h-5 w-0.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hidden md:block",
-                            hoveredIndex === index ? "bg-accent scale-y-100 opacity-100" : "bg-border scale-y-50 opacity-0",
-                          )}
-                        />
+                      {/* Grid layout for consistent alignment */}
+                      <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-4 md:gap-6 items-start">
+                        {/* Rank indicator */}
+                        <div className="hidden md:flex items-start gap-3 pt-1">
+                          <div
+                            className={cn(
+                              "h-5 w-0.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+                              hoveredIndex === index ? "bg-accent scale-y-100 opacity-100" : "bg-border scale-y-50 opacity-0",
+                            )}
+                          />
+                          <span className="text-xs font-mono text-muted-foreground/60 tabular-nums min-w-[2ch]">
+                            {String(index + 1).padStart(2, '0')}
+                          </span>
+                        </div>
 
+                        {/* Project content - center column */}
                         <div className="flex-1 min-w-0">
-                          {/* Project rank and title - using index for visual numbering since projects are already sorted by display_order */}
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-xs font-mono text-muted-foreground/60 tabular-nums">
+                          {/* Mobile rank and title */}
+                          <div className="flex items-start gap-3 mb-2 md:mb-0">
+                            <span className="md:hidden text-xs font-mono text-muted-foreground/60 tabular-nums pt-1">
                               {String(index + 1).padStart(2, '0')}
                             </span>
-                            <span
+                            <div className="flex-1">
+                              <h3
+                                className={cn(
+                                  "text-lg md:text-xl font-medium tracking-tight transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] mb-2",
+                                  hoveredIndex === index ? "text-foreground" : "text-muted-foreground",
+                                )}
+                              >
+                                {project.title}
+                              </h3>
+
+                              {/* Project description */}
+                              <p
+                                className={cn(
+                                  "text-sm text-muted-foreground/80 mb-3 line-clamp-2 transition-all duration-500",
+                                  hoveredIndex === index && "text-muted-foreground"
+                                )}
+                              >
+                                {project.description}
+                              </p>
+
+                              {/* Technologies */}
+                              <div className="flex flex-wrap gap-2 mb-3">
+                                {project.languages.slice(0, 5).map((tech) => (
+                                  <span
+                                    key={tech}
+                                    className="text-[10px] font-mono text-muted-foreground/60 px-2 py-1 bg-muted/30 rounded-md border border-border/50"
+                                  >
+                                    {tech}
+                                  </span>
+                                ))}
+                                {project.languages.length > 5 && (
+                                  <span className="text-[10px] font-mono text-muted-foreground/60 px-2 py-1">
+                                    +{project.languages.length - 5} more
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Status and Year */}
+                              <div className="flex gap-2">
+                                <span className="inline-flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground border border-border rounded-full px-2 py-0.5">
+                                  <span className={`w-1 h-1 rounded-full ${
+                                    project.status?.toLowerCase() === 'live' 
+                                      ? 'bg-success' 
+                                      : project.status?.toLowerCase() === 'in development' 
+                                      ? 'bg-warning'
+                                      : project.status?.toLowerCase() === 'testing'
+                                      ? 'bg-blue-500'
+                                      : project.status?.toLowerCase() === 'paused'
+                                      ? 'bg-destructive'
+                                      : 'bg-muted-foreground'
+                                  }`} />
+                                  {project.status || 'Live'}
+                                </span>
+                                <span className="inline-flex items-center gap-2 text-[10px] font-mono text-muted-foreground border border-border rounded-full px-2 py-0.5">
+                                  {project.dev_year}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Action column - fixed width for alignment */}
+                        <div className="flex items-center gap-3 md:min-w-[200px] justify-end">
+                          {/* Progress bar with percentage */}
+                          <div className="flex items-center gap-2 flex-1 md:flex-initial">
+                            <div
                               className={cn(
-                                "text-lg md:text-xl font-medium tracking-tight transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                                hoveredIndex === index ? "text-foreground translate-x-0" : "text-muted-foreground md:-translate-x-5",
+                                "relative w-full md:w-24 h-1.5 rounded-full overflow-hidden bg-border/50 dark:bg-border/30",
                               )}
                             >
-                              {project.title}
+                              {/* Background track */}
+                              <div className="absolute inset-0 bg-muted/50 dark:bg-muted/20" />
+
+                              {/* Progress fill */}
+                              <div
+                                className={cn(
+                                  "absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out",
+                                  project.status?.toLowerCase() === 'paused'
+                                    ? "bg-gradient-to-r from-destructive/80 to-destructive"
+                                    : "bg-gradient-to-r from-accent/80 to-accent",
+                                )}
+                                style={{
+                                  width: `${project.progress || 0}%`,
+                                }}
+                              />
+                            </div>
+                            <span className="text-[10px] font-mono text-muted-foreground/60 tabular-nums min-w-[3ch]">
+                              {project.progress || 0}%
                             </span>
                           </div>
 
-                          {/* Project description */}
-                          <p
-                            className={cn(
-                              "text-sm text-muted-foreground/80 mb-3 line-clamp-2 transition-all duration-500",
-                              hoveredIndex === index && "text-muted-foreground"
-                            )}
-                          >
-                            {project.description}
-                          </p>
-
-                          {/* Technologies */}
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            {project.languages.slice(0, 5).map((tech) => (
-                              <span
-                                key={tech}
-                                className="text-[10px] font-mono text-muted-foreground/60 px-2 py-1 bg-muted/30 rounded-md border border-border/50"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                            {project.languages.length > 5 && (
-                              <span className="text-[10px] font-mono text-muted-foreground/60 px-2 py-1">
-                                +{project.languages.length - 5} more
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Status and Year */}
+                          {/* Action icons */}
                           <div className="flex gap-2">
-                            <span className="inline-flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground border border-border rounded-full px-2 py-0.5">
-                              <span className={`w-1 h-1 rounded-full ${
-                                project.status?.toLowerCase() === 'live' 
-                                  ? 'bg-success' 
-                                  : project.status?.toLowerCase() === 'in development' 
-                                  ? 'bg-warning' 
-                                  : 'bg-muted-foreground'
-                              }`} />
-                              {project.status || 'Live'}
-                            </span>
-                            <span className="inline-flex items-center gap-2 text-[10px] font-mono text-muted-foreground border border-border rounded-full px-2 py-0.5">
-                              {project.dev_year}
-                            </span>
+                            {project.github_link && (
+                              <a
+                                href={project.github_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:border-foreground/50 hover:bg-muted/30 transition-all"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Github className="w-4 h-4" />
+                              </a>
+                            )}
+                            {project.live_link && (
+                              <a
+                                href={project.live_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:border-foreground/50 hover:bg-muted/30 transition-all"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </a>
+                            )}
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Right side - action links */}
-                      <div className="flex items-center gap-2 mt-4 md:mt-0 md:ml-4">
-                        <div
-                          className={cn(
-                            "relative w-24 h-1 rounded-full overflow-hidden bg-border/50 dark:bg-border/30 hidden md:block",
-                          )}
-                        >
-                          {/* Background track */}
-                          <div className="absolute inset-0 bg-muted/50 dark:bg-muted/20" />
-
-                          {/* Animated fill */}
-                          <div
-                            className={cn(
-                              "absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                              "bg-gradient-to-r from-accent/80 to-accent",
-                            )}
-                            style={{
-                              width: hoveredIndex === index ? "100%" : "0%",
-                              transitionDelay: hoveredIndex === index ? "100ms" : "0ms",
-                            }}
-                          />
-
-                          {/* Shine effect on hover */}
-                          <div
-                            className={cn(
-                              "absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent",
-                              "transition-transform duration-700 ease-out",
-                              hoveredIndex === index ? "translate-x-full" : "-translate-x-full",
-                            )}
-                            style={{
-                              transitionDelay: hoveredIndex === index ? "300ms" : "0ms",
-                            }}
-                          />
-                        </div>
-
-                        <div className="flex gap-2">
-                          {project.github_link && (
-                            <a
-                              href={project.github_link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:border-foreground/50 hover:bg-muted/30 transition-all"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Github className="w-4 h-4" />
-                            </a>
-                          )}
-                          {project.live_link && (
-                            <a
-                              href={project.live_link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:border-foreground/50 hover:bg-muted/30 transition-all"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </a>
-                          )}
                         </div>
                       </div>
                     </div>
