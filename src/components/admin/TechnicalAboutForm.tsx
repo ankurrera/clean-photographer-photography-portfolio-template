@@ -53,16 +53,24 @@ export const TechnicalAboutForm = ({ aboutData, onSave, onCancel }: TechnicalAbo
     setStats(newStats);
   };
 
+  const isFormValid = () => {
+    return (
+      sectionLabel.trim() !== '' &&
+      heading.trim() !== '' &&
+      contentBlocks.filter(block => block.trim() !== '').length > 0
+    );
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!isFormValid()) {
+      return;
+    }
+
     // Filter out empty content blocks and stats
     const filteredBlocks = contentBlocks.filter(block => block.trim() !== '');
     const filteredStats = stats.filter(stat => stat.value.trim() !== '' && stat.label.trim() !== '');
-
-    if (!sectionLabel.trim() || !heading.trim() || filteredBlocks.length === 0) {
-      return;
-    }
 
     const data: Partial<TechnicalAbout> = {
       section_label: sectionLabel.trim(),
@@ -234,11 +242,7 @@ export const TechnicalAboutForm = ({ aboutData, onSave, onCancel }: TechnicalAbo
           <div className="flex gap-2 pt-4">
             <Button 
               type="submit" 
-              disabled={
-                !sectionLabel.trim() || 
-                !heading.trim() || 
-                contentBlocks.filter(b => b.trim()).length === 0
-              }
+              disabled={!isFormValid()}
             >
               Save Changes
             </Button>
