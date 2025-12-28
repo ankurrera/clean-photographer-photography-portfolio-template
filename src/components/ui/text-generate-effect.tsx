@@ -29,7 +29,7 @@ export const TextGenerateEffect = ({
         delay: stagger(0.2),
       }
     );
-  }, [scope, animate, filter, duration]);
+  }, [scope, animate, filter, duration, wordsArray]);
 
   const renderWords = () => {
     return (
@@ -52,12 +52,8 @@ export const TextGenerateEffect = ({
   };
 
   return (
-    <div className={cn(className)}>
-      <div>
-        <div className="leading-snug tracking-wide">
-          {renderWords()}
-        </div>
-      </div>
+    <div className={cn("leading-snug tracking-wide", className)}>
+      {renderWords()}
     </div>
   );
 };
