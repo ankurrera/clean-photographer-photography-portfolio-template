@@ -358,37 +358,6 @@ export default function WYSIWYGEditor({ onSignOut }: WYSIWYGEditorProps) {
     setEditingPhotoId(id);
   }, []);
 
-
-  const handleBringForward = useCallback((id: string) => {
-    setPhotos((prevPhotos) => {
-      const photo = prevPhotos.find((p) => p.id === id);
-      if (!photo) return prevPhotos;
-      
-      const maxZIndex = Math.max(...prevPhotos.map((p) => p.z_index));
-      const newPhotos = prevPhotos.map((p) =>
-        p.id === id ? { ...p, z_index: maxZIndex + 1 } : p
-      );
-      
-      addToHistory(newPhotos, 'Brought photo forward');
-      return newPhotos;
-    });
-  }, [addToHistory]);
-
-  const handleSendBackward = useCallback((id: string) => {
-    setPhotos((prevPhotos) => {
-      const photo = prevPhotos.find((p) => p.id === id);
-      if (!photo) return prevPhotos;
-      
-      const minZIndex = Math.min(...prevPhotos.map((p) => p.z_index));
-      const newPhotos = prevPhotos.map((p) =>
-        p.id === id ? { ...p, z_index: minZIndex - 1 } : p
-      );
-      
-      addToHistory(newPhotos, 'Sent photo backward');
-      return newPhotos;
-    });
-  }, [addToHistory]);
-
   const handleSave = async () => {
     try {
       // Update all photos in database
@@ -657,8 +626,6 @@ export default function WYSIWYGEditor({ onSignOut }: WYSIWYGEditorProps) {
                           gridSize={20}
                           onUpdate={handlePhotoUpdate}
                           onDelete={handlePhotoDelete}
-                          onBringForward={handleBringForward}
-                          onSendBackward={handleSendBackward}
                           onEdit={handlePhotoEdit}
                           onSelect={handlePhotoSelect}
                         />
