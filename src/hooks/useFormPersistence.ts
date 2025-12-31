@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
  * Validates if a draft object contains meaningful data
  * Returns true if at least one field has a non-empty value
  */
-function hasMeaningfulData(obj: any): boolean {
+function hasMeaningfulData(obj: Record<string, unknown> | null | undefined): boolean {
   if (!obj || typeof obj !== 'object') {
     return false;
   }
@@ -27,7 +27,7 @@ function hasMeaningfulData(obj: any): boolean {
       // Check if array contains meaningful items
       const hasValidItems = value.some(item => {
         if (typeof item === 'string' && item.trim().length > 0) return true;
-        if (typeof item === 'object' && item !== null && hasMeaningfulData(item)) return true;
+        if (typeof item === 'object' && item !== null && hasMeaningfulData(item as Record<string, unknown>)) return true;
         return false;
       });
       if (hasValidItems) return true;
@@ -45,7 +45,7 @@ function hasMeaningfulData(obj: any): boolean {
 
     // Recursively check nested objects
     if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      if (hasMeaningfulData(value)) {
+      if (hasMeaningfulData(value as Record<string, unknown>)) {
         return true;
       }
     }
