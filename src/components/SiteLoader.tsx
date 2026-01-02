@@ -72,12 +72,13 @@ const SiteLoader = ({
   
   const hasCompletedRef = useRef<boolean>(!isInitialLoad);
 
-  // Memoize preloader options to prevent unnecessary re-renders
+  // Memoize preloader options - only fallbackTimeout and minDisplayTime can change
+  // isInitialLoad is from a ref and won't change
   const preloaderOptions = useMemo(() => ({
     fallbackTimeout,
     minDisplayTime,
     skip: !isInitialLoad,
-  }), [fallbackTimeout, minDisplayTime, isInitialLoad]);
+  }), [fallbackTimeout, minDisplayTime]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Use the global image preloader hook
   const { isLoading: isPreloading, progress, totalImages, loadedImages } = useGlobalImagePreloader(preloaderOptions);

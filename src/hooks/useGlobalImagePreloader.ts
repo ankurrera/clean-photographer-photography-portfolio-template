@@ -38,7 +38,8 @@ interface UseGlobalImagePreloaderOptions {
 
 /**
  * Preload a single image and optionally decode it
- * Returns a promise that resolves when the image is fully loaded and decoded
+ * Returns a promise that resolves when the image is fully loaded and decoded.
+ * Always resolves (never rejects) to ensure loading continues even if some images fail.
  */
 const preloadImage = (src: string): Promise<void> => {
   return new Promise((resolve) => {
@@ -49,6 +50,7 @@ const preloadImage = (src: string): Promise<void> => {
     }
 
     const img = new Image();
+    let hasRetried = false;
     
     const handleComplete = () => {
       // Try to decode the image for smoother rendering
@@ -62,6 +64,18 @@ const preloadImage = (src: string): Promise<void> => {
     };
 
     const handleError = () => {
+      // If CORS failed, retry without crossOrigin attribute
+      if (!hasRetried && img.crossOrigin) {
+        hasRetried = true;
+        const retryImg = new Image();
+        retryImg.onload = handleComplete;
+        retryImg.onerror = () => {
+          console.warn(`[ImagePreloader] Failed to load: ${src}`);
+          resolve(); // Don't block on failed images
+        };
+        retryImg.src = src;
+        return;
+      }
       // Don't block on failed images, just resolve
       console.warn(`[ImagePreloader] Failed to load: ${src}`);
       resolve();
@@ -70,7 +84,8 @@ const preloadImage = (src: string): Promise<void> => {
     img.onload = handleComplete;
     img.onerror = handleError;
     
-    // Set crossOrigin for external images (like Supabase storage)
+    // Set crossOrigin for external images (like Supabase storage) to enable decode()
+    // If this causes CORS issues, we'll retry without it
     img.crossOrigin = 'anonymous';
     img.src = src;
     
