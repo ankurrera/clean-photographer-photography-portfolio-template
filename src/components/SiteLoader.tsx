@@ -37,6 +37,7 @@ const SiteLoader = ({
   
   const startTimeRef = useRef<number>(Date.now());
   const hasLoadedRef = useRef<boolean>(false);
+  const cleanupRef = useRef<(() => void) | null>(null);
 
   const finishLoading = useCallback(() => {
     // Prevent multiple calls
@@ -64,8 +65,12 @@ const SiteLoader = ({
     if (!isVisible) return;
 
     let fallbackTimer: ReturnType<typeof setTimeout>;
+    let isMounted = true;
 
     const checkAllAssetsLoaded = () => {
+      // Prevent execution if already finished or unmounted
+      if (hasLoadedRef.current || !isMounted) return;
+      
       // Check if document is ready
       if (document.readyState === "complete") {
         // Wait for all images to be loaded
@@ -73,8 +78,18 @@ const SiteLoader = ({
         const imagePromises = images.map((img) => {
           if (img.complete) return Promise.resolve();
           return new Promise<void>((resolve) => {
-            img.onload = () => resolve();
-            img.onerror = () => resolve(); // Don't block on failed images
+            const handleLoad = () => {
+              img.removeEventListener("load", handleLoad);
+              img.removeEventListener("error", handleError);
+              resolve();
+            };
+            const handleError = () => {
+              img.removeEventListener("load", handleLoad);
+              img.removeEventListener("error", handleError);
+              resolve(); // Don't block on failed images
+            };
+            img.addEventListener("load", handleLoad);
+            img.addEventListener("error", handleError);
           });
         });
 
@@ -84,12 +99,23 @@ const SiteLoader = ({
         // Wait for all assets
         Promise.all([...imagePromises, fontsPromise])
           .then(() => {
-            finishLoading();
+            if (isMounted) {
+              finishLoading();
+            }
           })
           .catch(() => {
             // Fallback: finish loading even if some checks fail
-            finishLoading();
+            if (isMounted) {
+              finishLoading();
+            }
           });
+      }
+    };
+
+    const handleDOMContentLoaded = () => {
+      // Re-check after DOM is ready
+      if (document.readyState === "complete") {
+        checkAllAssetsLoaded();
       }
     };
 
@@ -109,17 +135,19 @@ const SiteLoader = ({
 
     // Also listen for DOMContentLoaded as an early signal
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", () => {
-        // Re-check after DOM is ready
-        if (document.readyState === "complete") {
-          checkAllAssetsLoaded();
-        }
-      });
+      document.addEventListener("DOMContentLoaded", handleDOMContentLoaded);
     }
 
-    return () => {
+    // Store cleanup function
+    cleanupRef.current = () => {
+      isMounted = false;
       clearTimeout(fallbackTimer);
       window.removeEventListener("load", checkAllAssetsLoaded);
+      document.removeEventListener("DOMContentLoaded", handleDOMContentLoaded);
+    };
+
+    return () => {
+      cleanupRef.current?.();
     };
   }, [fallbackTimeout, finishLoading, isVisible]);
 
