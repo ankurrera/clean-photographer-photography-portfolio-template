@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useGlobalImagePreloader } from "@/hooks/useGlobalImagePreloader";
 
 interface SiteLoaderProps {
@@ -65,12 +65,15 @@ const SiteLoader = ({
   
   const hasCompletedRef = useRef<boolean>(!isInitialLoad);
 
-  // Use the global image preloader hook
-  const { isLoading: isPreloading, progress, totalImages, loadedImages } = useGlobalImagePreloader({
+  // Memoize preloader options to prevent unnecessary re-renders
+  const preloaderOptions = useMemo(() => ({
     fallbackTimeout,
     minDisplayTime,
     skip: !isInitialLoad,
-  });
+  }), [fallbackTimeout, minDisplayTime, isInitialLoad]);
+
+  // Use the global image preloader hook
+  const { isLoading: isPreloading, progress, totalImages, loadedImages } = useGlobalImagePreloader(preloaderOptions);
 
   const finishLoading = useCallback(() => {
     // Prevent multiple calls

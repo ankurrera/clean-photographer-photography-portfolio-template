@@ -129,8 +129,7 @@ const fetchAllImageUrls = async (): Promise<string[]> => {
       supabase
         .from('about_page')
         .select('profile_image_url')
-        .limit(1)
-        .single(),
+        .limit(1),
     ]);
 
     // Process photos
@@ -180,8 +179,12 @@ const fetchAllImageUrls = async (): Promise<string[]> => {
 
     // Process about page profile image
     if (aboutPageResult.status === 'fulfilled' && aboutPageResult.value.data) {
-      if (aboutPageResult.value.data.profile_image_url) {
-        imageUrls.push(aboutPageResult.value.data.profile_image_url);
+      const aboutData = aboutPageResult.value.data;
+      // Handle array result from .limit(1)
+      if (Array.isArray(aboutData) && aboutData.length > 0) {
+        if (aboutData[0].profile_image_url) {
+          imageUrls.push(aboutData[0].profile_image_url);
+        }
       }
     }
 
@@ -225,6 +228,7 @@ export const useGlobalImagePreloader = (options: UseGlobalImagePreloaderOptions 
   const startTimeRef = useRef<number>(Date.now());
   const hasCompletedRef = useRef<boolean>(shouldSkip);
   const isMountedRef = useRef<boolean>(true);
+  const loadedCountRef = useRef<number>(0);
 
   const completeLoading = useCallback(() => {
     if (hasCompletedRef.current || !isMountedRef.current) return;
@@ -261,7 +265,8 @@ export const useGlobalImagePreloader = (options: UseGlobalImagePreloaderOptions 
     }
 
     isMountedRef.current = true;
-    let fallbackTimer: ReturnType<typeof setTimeout>;
+    loadedCountRef.current = 0;
+    let fallbackTimer: ReturnType<typeof setTimeout> | undefined;
 
     const preloadAllImages = async () => {
       try {
@@ -288,25 +293,27 @@ export const useGlobalImagePreloader = (options: UseGlobalImagePreloaderOptions 
           }));
         }
 
-        // Preload all images with progress tracking
-        let loadedCount = 0;
-        
+        // Reset loaded count ref
+        loadedCountRef.current = 0;
+
+        // Preload all images with progress tracking using atomic updates
         await Promise.all(
           imageUrls.map(async (url) => {
             await preloadImage(url);
-            loadedCount++;
+            // Atomic increment using ref
+            const newCount = ++loadedCountRef.current;
             
             if (isMountedRef.current) {
               setState((prev) => ({
                 ...prev,
-                loadedImages: loadedCount,
-                progress: Math.round((loadedCount / imageUrls.length) * 100),
+                loadedImages: newCount,
+                progress: Math.round((newCount / imageUrls.length) * 100),
               }));
             }
           })
         );
 
-        console.info(`[ImagePreloader] Successfully preloaded ${loadedCount}/${imageUrls.length} images`);
+        console.info(`[ImagePreloader] Successfully preloaded ${loadedCountRef.current}/${imageUrls.length} images`);
         clearTimeout(fallbackTimer);
         completeLoading();
 
