@@ -11,6 +11,9 @@ interface SiteLoaderProps {
 // Session storage key to track if initial load has completed
 const INITIAL_LOAD_KEY = "site-initial-load-complete";
 
+// Transition duration in ms - must match CSS transition duration in index.html
+const TRANSITION_DURATION_MS = 500;
+
 /**
  * Hides the initial inline loader from index.html and reveals the content.
  * The loader is displayed immediately via index.html before React loads.
@@ -25,7 +28,7 @@ const hideInitialLoader = () => {
     // Remove from DOM after transition completes
     setTimeout(() => {
       initialLoader.remove();
-    }, 500);
+    }, TRANSITION_DURATION_MS);
   }
   
   if (root) {
@@ -82,7 +85,7 @@ const SiteLoader = ({
       // After fade-out animation completes, update visibility state
       setTimeout(() => {
         setIsVisible(false);
-      }, 500); // Match the CSS transition duration
+      }, TRANSITION_DURATION_MS);
     }, remainingMinTime);
   }, [minDisplayTime]);
 
