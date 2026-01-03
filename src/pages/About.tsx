@@ -193,9 +193,24 @@ const About = () => {
             width: photo.width || DEFAULT_PHOTO_WIDTH,
             height: photo.height || DEFAULT_PHOTO_HEIGHT,
           });
+        } else {
+          // Use placeholder as final fallback
+          setPortrait({
+            src: '/placeholder.svg',
+            alt: 'Portrait',
+            width: DEFAULT_PHOTO_WIDTH,
+            height: DEFAULT_PHOTO_HEIGHT,
+          });
         }
       } catch (err) {
         console.error('Error fetching portrait:', err);
+        // Use placeholder on error
+        setPortrait({
+          src: '/placeholder.svg',
+          alt: 'Portrait',
+          width: DEFAULT_PHOTO_WIDTH,
+          height: DEFAULT_PHOTO_HEIGHT,
+        });
       } finally {
         setLoading(false);
       }
