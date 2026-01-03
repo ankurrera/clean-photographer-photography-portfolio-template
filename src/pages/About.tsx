@@ -27,7 +27,6 @@ import { Loader2 } from "lucide-react";
 import SocialLinks from "@/components/SocialLinks";
 import { VALIDATION_RULES, VALIDATION_MESSAGES } from "@/lib/validation/contactFormValidation";
 import { parseApiResponse } from "@/lib/utils";
-import { AnimatedBlobImage } from "@/components/ui/frame";
 
 const contactSchema = z.object({
   name: z.string().trim()
@@ -210,11 +209,11 @@ const About = () => {
 
             {/* Portrait */}
             {!loading && portrait && (
-              <div className="flex justify-center">
-                <AnimatedBlobImage
+              <div className="max-w-xs mx-auto">
+                <img
                   src={portrait.src}
                   alt={portrait.alt}
-                  className="max-w-[200px] sm:max-w-[250px] md:max-w-[300px] grayscale"
+                  className="w-full max-w-xs grayscale"
                 />
               </div>
             )}
